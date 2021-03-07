@@ -1,63 +1,73 @@
 import React, { useCallback } from 'react'
-import {
-  Section,
-  SectionHeader,
-  SectionControl,
-  SectionSelect,
-  SectionPrimaryButton
-} from './styled'
+import { Section, SectionHeader, SectionControl, SectionSelect } from './styled'
 import {
   usePreferences,
   GeneralThemeOptions,
   GeneralLanguageOptions,
-  GeneralNoteSortingOptions,
-  GeneralTutorialsOptions
+  GeneralNoteListViewOptions,
 } from '../../lib/preferences'
 import { useTranslation } from 'react-i18next'
 import { SelectChangeEventHandler } from '../../lib/events'
-import { useUsers } from '../../lib/accounts'
-import UserInfo from './UserInfo'
-import LoginButton from '../atoms/LoginButton'
 import { useAnalytics, analyticsEvents } from '../../lib/analytics'
-import { IconArrowRotate } from '../icons'
+import { FormCheckItem } from '../atoms/form'
+import { NoteSortingOptions } from '../../lib/sort'
+import NoteSortingOptionsFragment from '../molecules/NoteSortingOptionsFragment'
 
 const GeneralTab = () => {
   const { preferences, setPreferences } = usePreferences()
-  const [users, { removeUser }] = useUsers()
   const { report } = useAnalytics()
 
   const selectTheme: SelectChangeEventHandler = useCallback(
-    event => {
+    (event) => {
       setPreferences({
-        'general.theme': event.target.value as GeneralThemeOptions
+        'general.theme': event.target.value as GeneralThemeOptions,
       })
-      report(analyticsEvents.colorTheme)
+      report(analyticsEvents.updateUiTheme)
     },
     [setPreferences, report]
   )
 
   const selectLanguage: SelectChangeEventHandler = useCallback(
-    event => {
+    (event) => {
       setPreferences({
-        'general.language': event.target.value as GeneralLanguageOptions
+        'general.language': event.target.value as GeneralLanguageOptions,
       })
     },
     [setPreferences]
   )
 
   const selectNoteSorting: SelectChangeEventHandler = useCallback(
-    event => {
+    (event) => {
       setPreferences({
-        'general.noteSorting': event.target.value as GeneralNoteSortingOptions
+        'general.noteSorting': event.target.value as NoteSortingOptions,
       })
     },
     [setPreferences]
   )
 
-  const selectTutorialsDisplay: SelectChangeEventHandler = useCallback(
-    event => {
+  const selectNoteListView: SelectChangeEventHandler = useCallback(
+    (event) => {
       setPreferences({
-        'general.tutorials': event.target.value as GeneralTutorialsOptions
+        'general.noteListView': event.target
+          .value as GeneralNoteListViewOptions,
+      })
+    },
+    [setPreferences]
+  )
+
+  const toggleEnableAutoSync: React.ChangeEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      setPreferences({
+        'general.enableAutoSync': event.target.checked,
+      })
+    },
+    [setPreferences]
+  )
+
+  const toggleShowSubfolderContents: React.ChangeEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      setPreferences({
+        'general.showSubfolderContents': event.target.checked,
       })
     },
     [setPreferences]
@@ -67,31 +77,6 @@ const GeneralTab = () => {
 
   return (
     <div>
-      <Section>
-        <SectionHeader>{t('preferences.account')}</SectionHeader>
-        <div>
-          {users.map(user => (
-            <UserInfo key={user.id} user={user} signout={removeUser} />
-          ))}
-          {users.length === 0 && (
-            <LoginButton
-              onErr={console.error /* TODO: Toast error */}
-              ButtonComponent={SectionPrimaryButton}
-            >
-              {loginState =>
-                loginState !== 'logging-in' ? (
-                  <>{t('preferences.addAccount')}</>
-                ) : (
-                  <>
-                    <IconArrowRotate />
-                    {t('preferences.loginWorking')}
-                  </>
-                )
-              }
-            </LoginButton>
-          )}
-        </div>
-      </Section>
       <Section>
         <SectionHeader>{t('preferences.interfaceLanguage')}</SectionHeader>
         <SectionControl>
@@ -103,6 +88,7 @@ const GeneralTab = () => {
             <option value='en-US'>🇺🇸English (US)</option>
             <option value='es-ES'>🇪🇸Español (España)</option>
             <option value='fr-FR'>🇫🇷Français (France)</option>
+            <option value='it-IT'>🇮🇹️Italiano (Italia)</option>
             <option value='ja'>🇯🇵日本語</option>
             <option value='ko'>🇰🇷한국어</option>
             <option value='pt-BR'>🇧🇷Português (BR)</option>
@@ -120,10 +106,10 @@ const GeneralTab = () => {
             value={preferences['general.theme']}
             onChange={selectTheme}
           >
-            <option value='auto'>{t('preferences.auto')}</option>
-            <option value='light'>{t('preferences.light')}</option>
             <option value='dark'>{t('preferences.dark')}</option>
+            <option value='light'>{t('preferences.light')}</option>
             <option value='sepia'>{t('preferences.sepia')}</option>
+            <option value='legacy'>Legacy</option>
             <option value='solarizedDark'>
               {t('preferences.solarizedDark')}
             </option>
@@ -137,22 +123,46 @@ const GeneralTab = () => {
             value={preferences['general.noteSorting']}
             onChange={selectNoteSorting}
           >
-            <option value='date-updated'>{t('preferences.dateUpdated')}</option>
-            <option value='date-created'>{t('preferences.dateCreated')}</option>
-            <option value='title'>{t('preferences.title')}</option>
+            <NoteSortingOptionsFragment />
           </SectionSelect>
         </SectionControl>
       </Section>
       <Section>
-        <SectionHeader>{t('preferences.displayTutorialsLabel')}</SectionHeader>
+        <SectionHeader>{t('preferences.notesView')}</SectionHeader>
         <SectionControl>
           <SectionSelect
-            value={preferences['general.tutorials']}
-            onChange={selectTutorialsDisplay}
+            value={preferences['general.noteListView']}
+            onChange={selectNoteListView}
           >
-            <option value='display'>Display</option>
-            <option value='hide'>Hide</option>
+            <option value='default'>{t('preferences.notesViewDefault')}</option>
+            <option value='compact'>{t('preferences.notesViewCompact')}</option>
           </SectionSelect>
+        </SectionControl>
+      </Section>
+      <Section>
+        <SectionHeader>{t('preferences.autoSync')}</SectionHeader>
+        <SectionControl>
+          <FormCheckItem
+            id='checkbox-enable-auto-sync'
+            type='checkbox'
+            checked={preferences['general.enableAutoSync']}
+            onChange={toggleEnableAutoSync}
+          >
+            {t('preferences.autoSync')}
+          </FormCheckItem>
+        </SectionControl>
+      </Section>
+      <Section>
+        <SectionHeader>{t('preferences.subfolders')}</SectionHeader>
+        <SectionControl>
+          <FormCheckItem
+            id='checkbox-show-subfolder-content'
+            type='checkbox'
+            checked={preferences['general.showSubfolderContents']}
+            onChange={toggleShowSubfolderContents}
+          >
+            {t('preferences.subfoldersView')}
+          </FormCheckItem>
         </SectionControl>
       </Section>
     </div>

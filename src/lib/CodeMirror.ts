@@ -2,21 +2,35 @@ import CodeMirror from 'codemirror'
 import 'codemirror/addon/runmode/runmode'
 import 'codemirror/addon/mode/overlay'
 import 'codemirror/addon/comment/comment'
+import 'codemirror/addon/edit/continuelist'
+import 'codemirror/addon/dialog/dialog'
+import 'codemirror/addon/scroll/scrollpastend'
+import 'codemirror/addon/search/search'
+import 'codemirror/addon/search/searchcursor'
+import 'codemirror/addon/search/jump-to-line'
+import 'codemirror/addon/dialog/dialog.css'
 import 'codemirror/mode/markdown/markdown'
+import 'codemirror/mode/gfm/gfm'
+import 'codemirror/mode/xml/xml'
 import 'codemirror/mode/css/css'
 import debounce from 'lodash/debounce'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/keymap/sublime'
 import 'codemirror/keymap/emacs'
 import 'codemirror/keymap/vim'
+import 'codemirror-abap'
 
 const dispatchModeLoad = debounce(() => {
   window.dispatchEvent(new CustomEvent('codemirror-mode-load'))
 }, 300)
 
 export async function requireMode(mode: string) {
-  await import(`codemirror/mode/${mode}/${mode}.js`)
-  dispatchModeLoad()
+  try {
+    await import(`codemirror/mode/${mode}/${mode}.js`)
+    dispatchModeLoad()
+  } catch (error) {
+    console.warn(error)
+  }
 }
 
 export function getCodeMirrorTheme(theme?: string) {
@@ -115,5 +129,10 @@ export const themes = [
   'paraiso-dark',
   'shadowfox',
   'ttcn',
-  'yonce'
-]
+  'yonce',
+].sort()
+
+export interface EditorPosition {
+  line: number
+  ch: number
+}

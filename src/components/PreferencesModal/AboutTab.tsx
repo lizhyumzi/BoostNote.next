@@ -4,12 +4,12 @@ import {
   Section,
   SectionHeader,
   SectionSubtleText,
-  PrimaryAnchor
+  PrimaryAnchor,
 } from './styled'
 import { openNew } from '../../lib/platform'
 import Image from '../atoms/Image'
-import AppLink from '../atoms/AppLink'
 import { useTranslation } from 'react-i18next'
+import SubscribeNewsLettersForm from '../organisms/SubscribeNewsLettersForm'
 
 const AboutContents = styled.div`
   max-width: 360px;
@@ -118,22 +118,16 @@ const AboutTab = () => {
                   <PrimaryLink href='https://boostnote.io/'>
                     {t('about.website')}
                   </PrimaryLink>
-                  <PrimaryLink href='https://boostnote.io/wiki/'>
-                    {t('about.boostWiki')}
-                  </PrimaryLink>
                 </p>
               </div>
             </div>
             <SectionSubtleText className='about-outline-copy'>
-              Copyright (C) 2017 - 2019 BoostIO
+              Copyright (C) 2016 - 2021 BoostIO
               <br />
               License: GPL v3
             </SectionSubtleText>
           </div>
-          <div className='about-platform'>
-            <SectionHeader>{t('about.platform')}</SectionHeader>
-            <AppLink />
-          </div>
+          <SubscribeNewsLettersForm />
           <div className='about-community'>
             <SectionHeader>{t('about.community')}</SectionHeader>
             <div className='about-community-links'>
@@ -156,7 +150,7 @@ const AboutTab = () => {
               </ul>
               <ul>
                 <li>
-                  <PrimaryLink href='https://boostnote-group.slack.com/join/shared_invite/enQtMzkxOTk4ODkyNzc0LWQxZTQwNjBlMDI4YjkyYjg2MTRiZGJhNzA1YjQ5ODA5M2M0M2NlMjI5YjhiYWQzNzgzYmU0MDMwOTlmZmZmMGE'>
+                  <PrimaryLink href='https://join.slack.com/t/boostnote-group/shared_invite/zt-cun7pas3-WwkaezxHBB1lCbUHrwQLXw'>
                     {t('about.slack')}
                   </PrimaryLink>
                 </li>

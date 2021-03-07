@@ -5,7 +5,7 @@
     'general.cancel': 'Cancelar',
     'general.attachments': 'Anexos',
     'general.trash': 'Lixo',
-    'general.allnote': 'All Notes',
+    'general.allNotes': 'All Notes',
     'general.signin': 'Logar',
     'general.signOut': 'Sair',
     'general.save': 'Salvar',
@@ -22,7 +22,7 @@
     'storage.remove': 'Remover armazenamento',
     'storage.removeMessage':
       'O armazenamento será desvinculado deste aplicativo.',
-    'storage.delete': 'Deletar armazenamento',
+    'storage.delete': 'Deletar armazenamento {{storage}}',
     'storage.move': 'Mover nota',
     'storage.moveTitle': 'Mover nota para outro armazenamento',
     'storage.moveMessage':
@@ -44,9 +44,9 @@
     'folder.removeMessage': 'Todas as notas e sub-pastas serão deletadas.',
 
     //Tag
-    'tag.tag': 'Tags',
-    'tag.remove': 'Remover Tag',
-    'tag.removeMessage': 'A Tag será removida de todas as notas.',
+    'tag.tags': 'Labels',
+    'tag.remove': 'Remover Label',
+    'tag.removeMessage': 'A Label será removida de todas as notas.',
 
     //Note
     'note.duplicate': 'Duplicar',
@@ -60,9 +60,11 @@
     'note.nothingMessage': 'Nenhuma nota foi encontrada.',
     'note.noTitle': 'Sem título',
     'note.date': 'Atrás',
-    'note.createKeyMac': 'Mac: Command(⌘) + n',
-    'note.createKeyWinLin': 'Windows/Linux: Ctrl + n',
-    'note.createkeymessage1': 'Para criar uma nova nota',
+    'note.createKeyOr': 'ou',
+    'note.createKey': 'N',
+    'note.createKeyMac': 'em Mac',
+    'note.createKeyWinLin': 'em Windows/Linux',
+    'note.createkeymessage1': 'Para criar uma nova nota, pressione',
     'note.createkeymessage2': 'Selecionar um armazenamento',
     'note.createkeymessage3': 'Para criar uma nota',
     'note.restore': 'Restore',
@@ -148,17 +150,5 @@
     'preferences.markdownCodeBlockTheme': 'Code Block Theme',
     'preferences.defaultTheme': 'Usar estilo padrão',
     'preferences.markdownPreview': 'Pré-visualizar Markdown',
-
-    // Preferences ImportTab
-    'preferences.import': 'Import',
-    'preferences.description': 'Importar arquivos .cson do antigo Boostnote.',
-    'preferences.importFlow1': '1. Abrir pasta do antigo Boostnote em seu PC.',
-    'preferences.importFlow2':
-      '2. Arraste e solte os arquivos .cson no formulário abaixo.',
-    'preferences.importFlow3':
-      '3. Escolha o armazenamento e pasta que você quer mover seus arquivos antigos.',
-    'preferences.importFlow4': '4. Upload!',
-    'preferences.importRemove': 'Remover',
-    'preferences.importUpload': 'Upload'
-  }
+  },
 }

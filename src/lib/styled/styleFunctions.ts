@@ -1,7 +1,12 @@
 import { BaseTheme } from './BaseTheme'
+import { isColorBright } from '../colors'
 
 interface StyledProps {
   theme: BaseTheme
+}
+
+export interface TagStyleProps {
+  color: string
 }
 
 export const backgroundColor = ({ theme }: StyledProps) =>
@@ -12,23 +17,6 @@ export const secondaryBackgroundColor = ({ theme }: StyledProps) =>
 
 export const activeBackgroundColor = ({ theme }: StyledProps) =>
   `background-color: ${theme.activeBackgroundColor};`
-
-export const activeSideBarSecondaryTextColor = ({ theme }: StyledProps) =>
-  `color: ${theme.activeSideBarSecondaryTextColor};`
-
-export const sideBarBackgroundColor = ({ theme }: StyledProps) =>
-  `background-color: ${theme.sideBarBackgroundColor};`
-
-export const iconColor = ({ theme }: StyledProps) => `color: ${theme.iconColor};
-transition: 200ms color;
-&:hover,
-&:focus {
-  color: ${theme.activeIconColor};
-}
-&:active,
-&.active {
-  color: ${theme.primaryColor};
-}`
 
 export const noteListIconColor = ({ theme }: StyledProps) => `
 color: ${theme.noteListIconColor};
@@ -67,7 +55,7 @@ export const PrimaryTextColor = ({ theme }: StyledProps) =>
   `color: ${theme.primaryColor};`
 
 export const uiTextColor = ({
-  theme
+  theme,
 }: StyledProps) => `color: ${theme.uiTextColor};
 transition: 200ms color;
 &:hover,
@@ -79,22 +67,6 @@ transition: 200ms color;
 &:disabled {
   color: ${theme.disabledUiTextColor};
 }`
-
-export const sideBarTextColor = ({
-  theme
-}: StyledProps) => `color: ${theme.sideBarTextColor};
-  &:hover,
-  &:focus,
-  &:active,
-  &.active {
-    color: ${theme.activeSideBarSecondaryTextColor};
-  }`
-
-export const sideBarDefaultTextColor = ({ theme }: StyledProps) =>
-  `color: ${theme.sideBarTextColor};`
-
-export const sideBarSecondaryTextColor = ({ theme }: StyledProps) =>
-  `color: ${theme.sideBarSecondaryTextColor};`
 
 export const borderColor = ({ theme }: StyledProps) =>
   `border-color: ${theme.borderColor};`
@@ -119,7 +91,7 @@ export const contextMenuShadow = ({ theme }: StyledProps) =>
 
 export const inputStyle = ({ theme }: StyledProps) =>
   `background-color: ${theme.inputBackground};
-border: none;
+border: 1px solid ${theme.borderColor};
 border-radius: 2px;
 color: ${theme.textColor};
 &:focus {
@@ -157,63 +129,94 @@ font-size: 13px;
 &:focus {
   box-shadow: 0 0 0 2px ${theme.primaryColor};
 }
-&:disabled {
+&:disabled,
+&.disabled {
   opacity: .5;
   cursor: default;
 }
 `
 
 export const secondaryButtonStyle = ({ theme }: StyledProps) => `border: none;
-background-color: ${theme.inputBackground};
+background-color: ${theme.secondaryButtonBackgroundColor};
 color: ${theme.secondaryButtonLabelColor};
+border: 1px solid ${theme.borderColor};
 font-size: 13px;
 
 &:hover,
 &:active,
 &.active {
   cursor: pointer;
+  color: ${theme.secondaryButtonHoverLabelColor};
   background-color: ${theme.primaryColor};
 }
 &:focus {
   box-shadow: 0 0 0 2px ${theme.primaryColor};
 }
-&:disabled {
+&:disabled,
+&.disabled {
   opacity: .5;
   cursor: default;
 }
 `
 
-export const selectStyle = ({ theme }: StyledProps) => `
-  border: ${theme.borderColor};
-  background-color: ${theme.inputBackground};
-  color: ${theme.textColor};
-  &:focus {
-    box-shadow: 0 0 0 2px ${theme.primaryColor};
-  }
+export const selectStyle = ({
+  theme,
+}: StyledProps) => `background-color: ${theme.inputBackground};
+border: 1px solid ${theme.borderColor};
+border-radius: 2px;
+color: ${theme.textColor};
+&:focus {
+  box-shadow: 0 0 0 2px ${theme.primaryColor};
+}
 `
 
 export const tableStyle = ({ theme }: StyledProps) => `
+border: 1px solid ${theme.borderColor};
+border-collapse: collapse;
+color: ${theme.textColor};
+text-align: left;
+
+th, td {
+  padding: 16px 24px;
   border: 1px solid ${theme.borderColor};
-  border-collapse: collapse;
-  color: ${theme.textColor};
-  text-align: left;
+  font-weight: 400;
+}
 
-  th, td {
-    padding: 16px 24px;
-    border: 1px solid ${theme.borderColor};
-    font-weight: 400;
+thead th {
+  font-size: 20px;
+  font-weight: 500;
+
+  span {
+    display: block;
   }
+}
 
-  thead th {
-    font-size: 20px;
-    font-weight: 500;
-
-    span {
-      display: block;
-    }
-  }
-
-  tbody td {
-    text-align: center;
-  }
+tbody td {
+  text-align: center;
+}
 `
+
+export const textOverflow = () => `
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+`
+
+export const flexCenter = () => `display: flex;
+align-items: center;
+justify-content: center;
+`
+
+export const tagBackgroundColor = ({
+  theme,
+  color,
+}: StyledProps & TagStyleProps) => `
+background-color: ${color || theme.secondaryBackgroundColor};
+  &:hover {
+    filter: brightness(${
+      isColorBright(color || theme.secondaryBackgroundColor) ? 85 : 115
+    }%
+    );
+    background-color: ${color || theme.secondaryBackgroundColor};
+  }
+}`

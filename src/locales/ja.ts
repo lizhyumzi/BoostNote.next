@@ -5,7 +5,7 @@ export default {
     'general.cancel': 'キャンセル',
     'general.attachments': '画像',
     'general.trash': 'ゴミ箱',
-    'general.allnote': '全てのノート',
+    'general.allNotess': '全てのノート',
     'general.signin': 'サインイン',
     'general.signOut': 'サインアウト',
     'general.save': '保存',
@@ -21,7 +21,7 @@ export default {
     'storage.renameMessage': '新しいストレージ名を入力する',
     'storage.remove': 'ストレージを除去する',
     'storage.removeMessage': 'このストレージはアプリから除外されます',
-    'storage.delete': 'ストレージを削除する',
+    'storage.delete': 'ストレージを削除する {{storage}}',
     'storage.move': 'ストレージを移動する',
     'storage.moveTitle': 'ノートを新しいストレージに移動する',
     'storage.moveMessage': 'ノートを別のストレージに移動させています',
@@ -42,9 +42,9 @@ export default {
     'folder.removeMessage': 'フォルダを削除すると全てのノートも削除されます',
 
     //Tag
-    'tag.tag': 'タグ',
-    'tag.remove': 'タグを削除する',
-    'tag.removeMessage': '全てのノートからタグが削除されます',
+    'tag.tags': 'ラベル',
+    'tag.remove': 'ラベルを削除する',
+    'tag.removeMessage': '全てのノートからラベルが削除されます',
 
     //Note
     'note.duplicate': 'コピー',
@@ -58,8 +58,10 @@ export default {
     'note.nothingMessage': 'ノートが見つかりません',
     'note.noTitle': '無題',
     'note.date': '前',
-    'note.createKeyMac': 'Mac: Command(⌘) + n',
-    'note.createKeyWinLin': 'Windows/Linux: Ctrl + n',
+    'note.createKeyOr': '又は',
+    'note.createKey': 'N',
+    'note.createKeyMac': 'Mac',
+    'note.createKeyWinLin': 'Windows/Linux',
     'note.createkeymessage1': 'ノート作成',
     'note.createkeymessage2': 'ストレージを選択しましょう',
     'note.createkeymessage3': 'ノート作成',
@@ -146,18 +148,5 @@ export default {
     'preferences.markdownCodeBlockTheme': 'コードブロックテーマ',
     'preferences.defaultTheme': 'Use default style',
     'preferences.markdownPreview': 'Markdown Preview',
-
-    // Preferences ImportTab
-    'preferences.import': 'データ移行',
-    'preferences.description': '旧Boost Noteアプリからデータを移行する',
-    'preferences.importFlow1':
-      '1. あなたのPCで、Boost Noteのファイルが入っているフォルダを選択します',
-    'preferences.importFlow2':
-      '2. .csonファイルを選択し、下のフォームにドラッグ&ドロップしてください',
-    'preferences.importFlow3':
-      '3. どのストレージ・フォルダにデータを移行させるか選択してください',
-    'preferences.importFlow4': '4. アップロード',
-    'preferences.importRemove': '削除',
-    'preferences.importUpload': 'アップロード'
-  }
+  },
 }

@@ -1,16 +1,18 @@
 import { BaseTheme } from '../lib/styled/BaseTheme'
 
 const base1Color = '#fdf6e4'
-const base2Color = '#efe8d6'
+const base2Color = '#fbebc3'
 const base3Color = '#393733'
-const primaryColor = '#F77942'
+const primaryColor = '#b38925'
+const primaryDarkerColor = '#9e7921'
+const dangerColor = '#DC3545'
 
 const dark54Color = 'rgba(0,0,0,0.54)'
 const dark26Color = 'rgba(0,0,0,0.26)'
 const dark12Color = 'rgba(0,0,0,0.12)'
+const dark87Color = '#212121'
 
 const light100Color = '#FFF'
-const light70Color = 'rgba(255,255,255,0.7)'
 const light30Color = 'rgba(255,255,255,0.3)'
 const light12Color = 'rgba(255,255,255,0.12)'
 
@@ -22,11 +24,8 @@ export const sepiaTheme: BaseTheme = {
     background: base1Color,
     alternativeBackground: base2Color,
     active: primaryColor,
-    border: dark12Color
+    border: dark12Color,
   },
-  fontSize: 15,
-  fontFamily: `-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Fira sans', Roboto, Helvetica,
-    Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'`,
 
   // General
   textColor: base3Color,
@@ -34,9 +33,10 @@ export const sepiaTheme: BaseTheme = {
   disabledUiTextColor: light30Color,
 
   primaryColor: primaryColor,
+  primaryDarkerColor: primaryDarkerColor,
+  dangerColor: dangerColor,
   borderColor: dark12Color,
-  iconColor: light30Color,
-  activeIconColor: light70Color,
+
   noteListIconColor: dark26Color,
   noteListActiveIconColor: dark54Color,
   noteDetailIconColor: dark26Color,
@@ -52,17 +52,50 @@ export const sepiaTheme: BaseTheme = {
   scrollBarThumbColor: dark12Color,
 
   // SideBar
-  sideBarBackgroundColor: base3Color,
-  activeSideBarSecondaryTextColor: light100Color,
-  sideBarTextColor: light70Color,
-  sideBarSecondaryTextColor: light30Color,
+  navBackgroundColor: '#fdf6e4',
+  navLabelColor: '#555',
+  navButtonColor: '#777',
+  navButtonHoverColor: '#555',
+  navButtonActiveColor: primaryColor,
+  navItemColor: '#555',
+  navItemBackgroundColor: 'transparent',
+  navItemHoverBackgroundColor: '#eee8d6',
+  navItemActiveColor: '#111',
+  navItemActiveBackgroundColor: '#eee8d6',
+  navItemHoverActiveBackgroundColor: '#e0e0e0',
+
+  // Team Switcher
+  teamSwitcherBackgroundColor: '#eee8d6',
+  teamSwitcherBorderColor: 'transparent',
+  teamSwitcherTextColor: base3Color,
+  teamSwitcherHoverBackgroundColor: primaryColor,
+  teamSwitcherHoverTextColor: light100Color,
+
+  // NotePage
+  noteNavEmptyItemColor: '#777',
+  noteNavItemBackgroundColor: '#eee8d6',
 
   // Button
   primaryButtonLabelColor: light100Color,
   primaryButtonBackgroundColor: primaryColor,
+  primaryButtonHoverBackgroundColor: primaryDarkerColor,
   secondaryButtonLabelColor: base3Color,
-  secondaryButtonBackgroundColor: 'transparent',
+  secondaryButtonHoverLabelColor: light100Color,
+  secondaryButtonBackgroundColor: '#eee8d6',
+  secondaryButtonHoverBackgroundColor: '#e0e0e0',
 
   // Input
-  inputBackground: dark12Color
+  inputBackground: dark12Color,
+
+  // Search Highlight
+  searchHighlightBackgroundColor: '#ffc107',
+  searchHighlightSubtleBackgroundColor: '#ffdb70',
+  searchItemSelectionTextColor: light100Color,
+  searchItemSelectionBackgroundColor: primaryColor,
+  searchItemSelectionHoverBackgroundColor: primaryDarkerColor,
+  searchHighlightTextColor: dark87Color,
+
+  // Tooltip
+  tooltipBackgroundColor: 'rgba(0,0,0,0.8)',
+  tooltipTextColor: '#f0f0f0',
 }

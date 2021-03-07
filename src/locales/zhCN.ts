@@ -5,7 +5,7 @@ export default {
     'general.cancel': '取消',
     'general.attachments': '附件',
     'general.trash': '回收站',
-    'general.allnote': '所有笔记',
+    'general.allNotes': '所有笔记',
     'general.signin': '登录',
     'general.signOut': '登出',
     'general.save': '保存',
@@ -21,7 +21,7 @@ export default {
     'storage.renameMessage': '输入新的储存名',
     'storage.remove': '移除储存',
     'storage.removeMessage': '这个储存将会从这个 APP 解除联系.',
-    'storage.delete': '删除储存',
+    'storage.delete': '删除储存 {{storage}}',
     'storage.move': '移动笔记',
     'storage.moveTitle': '移动笔记到其他储存',
     'storage.moveMessage': '你正在尝试把笔记移到另一个储存.',
@@ -41,7 +41,7 @@ export default {
     'folder.removeMessage': '所有笔记和子文件夹将被删除.',
 
     //Tag
-    'tag.tag': '标签',
+    'tag.tags': '标签',
     'tag.remove': '移除标签',
     'tag.removeMessage': '这个标签将从所有笔记中被移除.',
 
@@ -57,9 +57,11 @@ export default {
     'note.nothingMessage': '没有找到笔记.',
     'note.noTitle': '无标题',
     'note.date': '之前',
-    'note.createKeyMac': 'Mac: Command(⌘) + Enter',
-    'note.createKeyWinLin': 'Windows/Linux: Ctrl + Enter',
-    'note.createkeymessage1': '创建新笔记',
+    'note.createKeyOr': '要么',
+    'note.createKey': 'Enter',
+    'note.createKeyMac': '在Mac系统上',
+    'note.createKeyWinLin': '在Windows系统上',
+    'note.createkeymessage1': '创建新笔记, 按',
     'note.createkeymessage2': '选择储存',
     'note.createkeymessage3': '创建新笔记',
     'note.restore': 'Restore',
@@ -142,15 +144,5 @@ export default {
     'preferences.markdownCodeBlockTheme': '代码块主题',
     'preferences.defaultTheme': '使用默认主题',
     'preferences.markdownPreview': 'Markdown 预览',
-
-    // Preferences ImportTab
-    'preferences.import': '导入',
-    'preferences.description': '从旧版 Boostnote 导入 .cson 文件.',
-    'preferences.importFlow1': '1. 在你的电脑打开旧版 Boostnote 文件夹.',
-    'preferences.importFlow2': '2. 拖拽 .cson 文件到以下表单.',
-    'preferences.importFlow3': '3. 选择你想要移动旧数据的存储和文件夹.',
-    'preferences.importFlow4': '4. 上传!',
-    'preferences.importRemove': '移除',
-    'preferences.importUpload': '上传'
-  }
+  },
 }

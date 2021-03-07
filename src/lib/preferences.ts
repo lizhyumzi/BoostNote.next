@@ -5,6 +5,11 @@ import { useSetState } from 'react-use'
 import { useTranslation } from 'react-i18next'
 import { preferencesKey } from './localStorageKeys'
 import { User } from './accounts'
+import { NoteSortingOptions } from './sort'
+import { setTrafficLightPosition } from './electronOnly'
+import { osName } from './platform'
+import { nodeEnv } from '../cloud/lib/consts'
+import { setAccessToken } from '../cloud/lib/stores/electron'
 
 export type GeneralThemeOptions =
   | 'auto'
@@ -17,6 +22,7 @@ export type GeneralLanguageOptions =
   | 'en-US'
   | 'es-ES'
   | 'fr-FR'
+  | 'it-IT'
   | 'ja'
   | 'ko'
   | 'pt-BR'
@@ -24,25 +30,31 @@ export type GeneralLanguageOptions =
   | 'zh-CN'
   | 'zh-HK'
   | 'zh-TW'
-export type GeneralNoteSortingOptions =
-  | 'date-updated'
-  | 'date-created'
-  | 'title'
-export type GeneralTutorialsOptions = 'display' | 'hide'
-
+export type GeneralNoteListViewOptions = 'default' | 'compact'
 export type EditorIndentTypeOptions = 'tab' | 'spaces'
 export type EditorIndentSizeOptions = 2 | 4 | 8
 export type EditorKeyMapOptions = 'default' | 'vim' | 'emacs'
+export type EditorControlModeOptions = '2-toggles' | '3-buttons'
 
 export interface Preferences {
   // General
   'general.accounts': User[]
   'general.language': GeneralLanguageOptions
   'general.theme': GeneralThemeOptions
-  'general.noteSorting': GeneralNoteSortingOptions
+  'general.showAppNavigator': boolean
+  'general.noteSorting': NoteSortingOptions
+  'general.noteListView': GeneralNoteListViewOptions
   'general.enableAnalytics': boolean
-  'general.enableDownloadAppModal': boolean
-  'general.tutorials': GeneralTutorialsOptions
+  'general.enableAutoSync': boolean
+  'general.showSubfolderContents': boolean
+
+  // Cloud Workspace
+  'cloud.user': {
+    id: string
+    uniqueName: string
+    displayName: string
+    accessToken: string
+  } | null
 
   // Editor
   'editor.theme': string
@@ -51,10 +63,12 @@ export interface Preferences {
   'editor.indentType': EditorIndentTypeOptions
   'editor.indentSize': EditorIndentSizeOptions
   'editor.keyMap': EditorKeyMapOptions
+  'editor.controlMode': EditorControlModeOptions
 
   // Markdown
   'markdown.previewStyle': string
   'markdown.codeBlockTheme': string
+  'markdown.includeFrontMatter': boolean
 }
 
 function loadPreferences() {
@@ -77,15 +91,21 @@ const initialPreferences = loadPreferences()
 const basePreferences: Preferences = {
   // General
   'general.accounts': [],
+  'general.showAppNavigator': true,
   'general.language': 'en-US',
   'general.theme': 'dark',
-  'general.noteSorting': 'date-updated',
+  'general.noteSorting': 'updated-date-dsc',
   'general.enableAnalytics': true,
-  'general.enableDownloadAppModal': true,
-  'general.tutorials': 'display',
+  'general.enableAutoSync': true,
+  'general.noteListView': 'default',
+  'general.showSubfolderContents': true,
+
+  // BoostHub
+  'cloud.user': null,
 
   // Editor
-  'editor.theme': 'default',
+  'editor.theme': 'material-darker',
+  'editor.controlMode': '2-toggles',
   'editor.fontSize': 15,
   'editor.fontFamily':
     'SFMono-Regular,Consolas,Liberation Mono,Menlo,monospace',
@@ -95,13 +115,15 @@ const basePreferences: Preferences = {
 
   // Markdown
   'markdown.previewStyle': 'default',
-  'markdown.codeBlockTheme': 'default'
+  'markdown.codeBlockTheme': 'material-darker',
+  'markdown.includeFrontMatter': true,
 }
 
 function usePreferencesStore() {
   const [preferences, setPreferences] = useSetState<Preferences>(
     initialPreferences
   )
+  const [tab, setTab] = useState('about')
   useEffect(() => {
     savePreferences(preferences)
   }, [preferences])
@@ -109,35 +131,81 @@ function usePreferencesStore() {
   const mergedPreferences = useMemo(() => {
     return {
       ...basePreferences,
-      ...preferences
+      ...preferences,
     }
   }, [preferences])
 
   const [closed, setClosed] = useState(true)
-  const toggleClosed = useCallback(() => {
+  const togglePreferencesModal = useCallback(() => {
     if (closed) {
+      setTab('about')
       setClosed(false)
     } else {
       setClosed(true)
     }
   }, [closed, setClosed])
 
+  const openTab = useCallback(
+    (tab: string) => {
+      setTab(tab)
+      if (closed) {
+        setClosed(false)
+      }
+    },
+    [closed]
+  )
+
   const currentLanguage = mergedPreferences['general.language']
-  const { i18n } = useTranslation('preferences')
+  if (nodeEnv !== 'test') {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { i18n } = useTranslation('preferences')
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useEffect(() => {
+      i18n.changeLanguage(currentLanguage)
+    }, [i18n, currentLanguage])
+  }
+
+  const generalShowAppNavigator = preferences['general.showAppNavigator']
   useEffect(() => {
-    i18n.changeLanguage(currentLanguage)
-  }, [i18n, currentLanguage])
+    if (osName !== 'macos') {
+      return
+    }
+    if (generalShowAppNavigator) {
+      setTrafficLightPosition({ x: 8, y: 8 })
+    } else {
+      setTrafficLightPosition({ x: 8, y: 24 })
+    }
+  }, [generalShowAppNavigator])
+
+  const cloudUserInfo = preferences['cloud.user']
+  useEffect(() => {
+    if (cloudUserInfo == null) {
+      setAccessToken(null)
+      return
+    }
+
+    setAccessToken(cloudUserInfo.accessToken)
+  }, [cloudUserInfo])
 
   return {
+    tab,
+    openTab,
     closed,
     setClosed,
-    toggleClosed,
+    togglePreferencesModal,
     preferences: mergedPreferences,
-    setPreferences
+    setPreferences,
   }
 }
 
 export const {
   StoreProvider: PreferencesProvider,
-  useStore: usePreferences
+  useStore: usePreferences,
 } = createStoreContext(usePreferencesStore, 'preferences')
+
+export function useFirstUser() {
+  const { preferences } = usePreferences()
+  return useMemo(() => {
+    return preferences['general.accounts'][0]
+  }, [preferences])
+}

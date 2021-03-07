@@ -8,11 +8,15 @@ const filteredJson = {
   ...pick(['name', 'productName', 'version', 'author'], packageJson),
   dependencies: {
     'electron-updater': '^4.2.0',
-    'electron-log': '^4.0.0'
-  }
+    'electron-log': '^4.0.0',
+    'read-chunk': '^3.2.0',
+    'file-type': '^14.6.2',
+    'cson-parser': '^4.0.5',
+    got: '^11.8.1',
+  },
 }
 
 fs.writeFileSync(
-  path.join(__dirname, '../app/package.json'),
+  path.join(__dirname, '../electron/package.json'),
   JSON.stringify(filteredJson, null, 2) + '\n'
 )

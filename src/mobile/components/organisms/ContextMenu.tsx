@@ -4,8 +4,8 @@ import {
   MenuTypes,
   ContextMenuContext,
   menuVerticalPadding,
-  menuZIndex
-} from '../../../lib/contextMenu'
+  menuZIndex,
+} from '../../../mobile/lib/contextMenu'
 import styled from '../../../lib/styled'
 import {
   uiTextColor,
@@ -13,7 +13,7 @@ import {
   borderColor,
   backgroundColor,
   activeBackgroundColor,
-  borderBottom
+  borderBottom,
 } from '../../../lib/styled/styleFunctions'
 import { keyframes } from 'styled-components'
 
@@ -78,6 +78,14 @@ const ContextMenuItem = styled.button`
   }
 `
 
+const SeparatorContextMenuItem = styled.div`
+  height: 10px;
+  box-sizing: border-box;
+  background-color: ${({ theme }) => theme.borderColor};
+  border: none;
+  width: 100%;
+`
+
 interface ContextMenuProps {
   contextMenu: ContextMenuContext
 }
@@ -137,6 +145,8 @@ class ContextMenu extends React.Component<ContextMenuProps> {
                     {menu.label}
                   </ContextMenuItem>
                 )
+              case MenuTypes.Separator:
+                return <SeparatorContextMenuItem key={key} />
               default:
                 return (
                   <ContextMenuItem key={key}>

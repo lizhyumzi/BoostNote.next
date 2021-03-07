@@ -1,6 +1,11 @@
 import React, { CSSProperties } from 'react'
 import styled from '../../../lib/styled'
-import { borderBottom } from '../../../lib/styled/styleFunctions'
+import {
+  borderBottom,
+  textOverflow,
+  flexCenter,
+} from '../../../lib/styled/styleFunctions'
+import Icon from '../../../components/atoms/Icon'
 
 const TopBarLayoutContainer = styled.div`
   display: flex;
@@ -15,9 +20,7 @@ const TopBar = styled.div`
   height: 44px;
   position: relative;
   ${borderBottom}
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  ${flexCenter}
 `
 
 const TopBarLeftControl = styled.div`
@@ -37,7 +40,19 @@ const TopBarRightControl = styled.div`
 
 const TopBarTitle = styled.div`
   height: 44px;
-  line-height: 44px;
+  flex: 1;
+  padding: 0 88px;
+  overflow: hidden;
+  ${flexCenter}
+`
+
+const TopBarTitleIcon = styled.div`
+  padding-right: 0.25em;
+  ${flexCenter}
+`
+
+const TopBarTitleLabel = styled.div`
+  ${textOverflow}
 `
 
 const ContentContainer = styled.div`
@@ -46,24 +61,32 @@ const ContentContainer = styled.div`
 `
 
 interface TopBarLayoutProps {
-  title?: React.ReactNode
-  children?: React.ReactChild
+  titleLabel?: React.ReactNode
+  titleIconPath?: string
   style?: CSSProperties
   leftControl?: React.ReactNode
   rightControl?: React.ReactNode
 }
 
-const TopBarLayout = ({
-  title,
+const TopBarLayout: React.FC<TopBarLayoutProps> = ({
+  titleLabel,
+  titleIconPath,
   children,
   style,
   leftControl,
-  rightControl
-}: TopBarLayoutProps) => (
+  rightControl,
+}) => (
   <TopBarLayoutContainer style={style}>
     <TopBar>
       <TopBarLeftControl>{leftControl}</TopBarLeftControl>
-      <TopBarTitle>{title}</TopBarTitle>
+      <TopBarTitle>
+        {titleIconPath != null && (
+          <TopBarTitleIcon>
+            <Icon path={titleIconPath} />
+          </TopBarTitleIcon>
+        )}
+        <TopBarTitleLabel>{titleLabel}</TopBarTitleLabel>
+      </TopBarTitle>
       <TopBarRightControl>{rightControl}</TopBarRightControl>
     </TopBar>
     <ContentContainer>{children}</ContentContainer>

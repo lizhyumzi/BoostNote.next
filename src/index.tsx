@@ -2,26 +2,36 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './components/App'
 import { RouterProvider } from './lib/router'
-import { ContextMenuProvider } from './lib/contextMenu'
 import { DialogProvider } from './lib/dialog'
-import { ModalProvider } from './lib/modal'
 import { combineProviders } from './lib/context'
 import { DbProvider } from './lib/db'
 import { PreferencesProvider } from './lib/preferences'
 import { GeneralStatusProvider } from './lib/generalStatus'
 import { PreviewStyleProvider } from './lib/preview'
 import { ToastProvider } from './lib/toast'
+import { AnalyticsProvider } from './lib/analytics'
+import { StorageRouterProvider } from './lib/storageRouter'
+import { SearchModalProvider } from './lib/searchModal'
+import { CheckedFeaturesProvider } from './lib/checkedFeatures'
+import { BoostHubStoreProvider } from './lib/boosthub'
+import { CreateWorkspaceModalProvider } from './lib/createWorkspaceModal'
+import { CloudIntroModalProvider } from './lib/cloudIntroModal'
 
 const CombinedProvider = combineProviders(
+  BoostHubStoreProvider,
+  SearchModalProvider,
   PreviewStyleProvider,
   GeneralStatusProvider,
-  ModalProvider,
   DialogProvider,
-  ContextMenuProvider,
   DbProvider,
+  AnalyticsProvider,
   PreferencesProvider,
+  StorageRouterProvider,
   RouterProvider,
-  ToastProvider
+  ToastProvider,
+  CheckedFeaturesProvider,
+  CreateWorkspaceModalProvider,
+  CloudIntroModalProvider
 )
 
 function render(Component: typeof App) {

@@ -6,7 +6,7 @@ import {
   inputStyle,
   tableStyle,
   disabledUiTextColor,
-  PrimaryTextColor
+  PrimaryTextColor,
 } from '../../lib/styled/styleFunctions'
 
 export const Section = styled.section`
@@ -43,19 +43,16 @@ export const SectionControl = styled.div`
 `
 
 export const SectionSelect = styled.select`
-  ${selectStyle}
+  ${selectStyle};
   padding: 0 16px;
   width: 200px;
   height: 40px;
   border-radius: 2px;
-
-  option {
-    color: initial;
-  }
+  font-size: 14px;
 `
 
 export const SectionPrimaryButton = styled.button`
-  ${primaryButtonStyle}
+  ${primaryButtonStyle};
   padding: 0 16px;
   height: 40px;
   border-radius: 2px;
@@ -65,7 +62,7 @@ export const SectionPrimaryButton = styled.button`
 `
 
 export const SectionSecondaryButton = styled.button`
-  ${secondaryButtonStyle}
+  ${secondaryButtonStyle};
   padding: 0 16px;
   height: 40px;
   border-radius: 2px;
@@ -74,11 +71,12 @@ export const SectionSecondaryButton = styled.button`
 `
 
 export const SectionInput = styled.input`
-  ${inputStyle}
+  ${inputStyle};
   padding: 0 16px;
   width: 200px;
   height: 40px;
   border-radius: 2px;
+  font-size: 14px;
 `
 
 export const SectionTable = styled.table`
@@ -94,11 +92,27 @@ export const TopMargin = styled.div`
 `
 
 export const DeleteStorageButton = styled.button`
-  ${secondaryButtonStyle}
+  ${secondaryButtonStyle};
   padding: 0 16px;
   height: 40px;
   border-radius: 2px;
   cursor: pointer;
   vertical-align: middle;
   align-items: center;
+`
+
+export const SectionListSelect = styled.div`
+  ${selectStyle};
+  padding: 0 16px;
+  width: 200px;
+  height: 40px;
+  border-radius: 2px;
+  font-size: 14px;
+`
+
+export const SearchMatchHighlight = styled.span`
+  background-color: ${({ theme }) => theme.searchHighlightBackgroundColor};
+  color: ${({ theme }) => theme.searchHighlightTextColor};
+
+  padding: 2px;
 `

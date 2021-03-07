@@ -2,9 +2,9 @@ import React from 'react'
 import CodeEditor from './CodeEditor'
 import { usePreferences } from '../../lib/preferences'
 
-interface CustomizedCodeEditor {
+interface CustomizedCodeEditorProps {
   value: string
-  onChange: (
+  onChange?: (
     newValue: string,
     change: CodeMirror.EditorChangeLinkedList
   ) => void
@@ -12,6 +12,9 @@ interface CustomizedCodeEditor {
   className?: string
   mode?: string
   readonly?: boolean
+  onPaste?: (codeMirror: CodeMirror.Editor, event: ClipboardEvent) => void
+  onDrop?: (codeMirror: CodeMirror.Editor, event: DragEvent) => void
+  onCursorActivity?: (codeMirror: CodeMirror.Editor) => void
 }
 
 const CustomizedCodeEditor = ({
@@ -20,8 +23,11 @@ const CustomizedCodeEditor = ({
   codeMirrorRef,
   className,
   mode,
-  readonly
-}: CustomizedCodeEditor) => {
+  readonly,
+  onPaste,
+  onDrop,
+  onCursorActivity,
+}: CustomizedCodeEditorProps) => {
   const { preferences } = usePreferences()
   return (
     <CodeEditor
@@ -37,7 +43,11 @@ const CustomizedCodeEditor = ({
       keyMap={preferences['editor.keyMap']}
       mode={mode}
       readonly={readonly}
+      onPaste={onPaste}
+      onDrop={onDrop}
+      onCursorActivity={onCursorActivity}
     />
   )
 }
+
 export default CustomizedCodeEditor

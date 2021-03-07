@@ -3,18 +3,19 @@ import styled from '../../../lib/styled/styled'
 import {
   uiTextColor,
   inputStyle,
-  backgroundColor
+  backgroundColor,
 } from '../../../lib/styled/styleFunctions'
 import HighlightText from '../../../components/atoms/HighlightText'
 import { formatDistanceToNow } from 'date-fns'
 import { scaleAndTransformFromLeft } from '../../../lib/styled'
-import { PopulatedNoteDoc } from '../../../lib/db/types'
-import { useContextMenu, MenuTypes, MenuItem } from '../../../lib/contextMenu'
+import { useContextMenu, MenuTypes, MenuItem } from '../../lib/contextMenu'
 import { useDb } from '../../lib/db'
 import { useDialog, DialogIconTypes } from '../../../lib/dialog'
 import { useTranslation } from 'react-i18next'
 import { useRouter } from '../../lib/router'
-import { IconTrash } from '../../../components/icons'
+import { NoteDoc } from '../../../lib/db/types'
+import { mdiTrashCan } from '@mdi/js'
+import Icon from '../../../components/atoms/Icon'
 
 export const NoteListItemContainer = styled.div`
   margin: 0;
@@ -118,14 +119,20 @@ const NoteItemControlContainer = styled.div`
 `
 
 type NoteItemProps = {
-  note: PopulatedNoteDoc
+  note: NoteDoc
+  storageId: string
   recentlyCreated?: boolean
   search?: string
   basePathname: string
   focusList: () => void
 }
 
-export default ({ note, basePathname, search = '' }: NoteItemProps) => {
+export default ({
+  note,
+  storageId,
+  basePathname,
+  search = '',
+}: NoteItemProps) => {
   const href = `${basePathname}/${note._id}`
   const { popup } = useContextMenu()
   const { push } = useRouter()
@@ -145,15 +152,15 @@ export default ({ note, basePathname, search = '' }: NoteItemProps) => {
               type: MenuTypes.Normal,
               label: t('note.restore'),
               onClick: async () => {
-                untrashNote(note.storageId, note._id)
-              }
+                untrashNote(storageId, note._id)
+              },
             },
             {
               type: MenuTypes.Normal,
               label: t('note.delete'),
               onClick: async () => {
                 if (!note.trashed) {
-                  trashNote(note.storageId, note._id)
+                  trashNote(storageId, note._id)
                 } else {
                   messageBox({
                     title: t('note.delete2'),
@@ -164,35 +171,34 @@ export default ({ note, basePathname, search = '' }: NoteItemProps) => {
                     cancelButtonIndex: 1,
                     onClose: (value: number | null) => {
                       if (value === 0) {
-                        purgeNote(note.storageId, note._id)
+                        purgeNote(storageId, note._id)
                       }
-                    }
+                    },
                   })
                 }
-              }
-            }
+              },
+            },
           ]
         : [
             {
               type: MenuTypes.Normal,
               label: t('note.duplicate'),
               onClick: async () => {
-                createNote(note.storageId, {
+                createNote(storageId, {
                   title: note.title,
                   content: note.content,
                   folderPathname: note.folderPathname,
                   tags: note.tags,
-                  bookmarked: false,
-                  data: note.data
+                  data: note.data,
                 })
-              }
+              },
             },
             {
               type: MenuTypes.Normal,
               label: t('note.delete'),
               onClick: async () => {
                 if (!note.trashed) {
-                  trashNote(note.storageId, note._id)
+                  trashNote(storageId, note._id)
                 } else {
                   messageBox({
                     title: t('note.delete2'),
@@ -203,18 +209,28 @@ export default ({ note, basePathname, search = '' }: NoteItemProps) => {
                     cancelButtonIndex: 1,
                     onClose: (value: number | null) => {
                       if (value === 0) {
-                        purgeNote(note.storageId, note._id)
+                        purgeNote(storageId, note._id)
                       }
-                    }
+                    },
                   })
                 }
-              }
-            }
+              },
+            },
           ]
 
       popup(event, menuItems)
     },
-    [popup, createNote, note, trashNote, messageBox, purgeNote, t, untrashNote]
+    [
+      popup,
+      createNote,
+      note,
+      storageId,
+      trashNote,
+      messageBox,
+      purgeNote,
+      t,
+      untrashNote,
+    ]
   )
 
   const contentPreview = useMemo(() => {
@@ -241,7 +257,7 @@ export default ({ note, basePathname, search = '' }: NoteItemProps) => {
 
   const touchStartClientXRef = useRef({
     startClientX: -1,
-    currentClientX: -1
+    currentClientX: -1,
   })
 
   const [swiped, setSwiped] = useState(false)
@@ -294,7 +310,7 @@ export default ({ note, basePathname, search = '' }: NoteItemProps) => {
         <div className='preview'>{contentPreview}</div>
         {note.tags.length > 0 && (
           <div className='tag-area'>
-            {note.tags.map(tag => (
+            {note.tags.map((tag) => (
               <span className='tag' key={tag}>
                 <HighlightText text={tag} search={search} />
               </span>
@@ -318,7 +334,7 @@ export default ({ note, basePathname, search = '' }: NoteItemProps) => {
         <button
           onClick={() => {
             if (!note.trashed) {
-              trashNote(note.storageId, note._id)
+              trashNote(storageId, note._id)
             } else {
               messageBox({
                 title: t('note.delete2'),
@@ -329,14 +345,14 @@ export default ({ note, basePathname, search = '' }: NoteItemProps) => {
                 cancelButtonIndex: 1,
                 onClose: (value: number | null) => {
                   if (value === 0) {
-                    purgeNote(note.storageId, note._id)
+                    purgeNote(storageId, note._id)
                   }
-                }
+                },
               })
             }
           }}
         >
-          <IconTrash />
+          <Icon path={mdiTrashCan} />
         </button>
       </NoteItemControlContainer>
     </NoteListItemContainer>

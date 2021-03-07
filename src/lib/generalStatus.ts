@@ -11,7 +11,15 @@ export interface GeneralStatus {
   sideBarWidth: number
   noteListWidth: number
   noteViewMode: ViewModeType
+  preferredEditingViewMode: Exclude<ViewModeType, 'preview'>
   sideNavOpenedItemList: string[]
+  boostHubTeams: {
+    id: string
+    name: string
+    domain: string
+    iconUrl?: string
+  }[]
+  showingNoteContextMenu: boolean
 }
 
 function loadGeneralStatus(): Partial<GeneralStatus> {
@@ -35,8 +43,11 @@ const initialGeneralStatus = loadGeneralStatus()
 const baseGeneralStatus: GeneralStatus = {
   sideBarWidth: 160,
   noteListWidth: 250,
-  noteViewMode: 'edit',
-  sideNavOpenedItemList: []
+  noteViewMode: 'split',
+  preferredEditingViewMode: 'split',
+  sideNavOpenedItemList: [],
+  boostHubTeams: [],
+  showingNoteContextMenu: false,
 }
 
 function useGeneralStatusStore() {
@@ -47,7 +58,7 @@ function useGeneralStatusStore() {
   const mergedGeneralStatus = useMemo(() => {
     return {
       ...baseGeneralStatus,
-      ...generalStatus
+      ...generalStatus,
     }
   }, [generalStatus])
 
@@ -65,7 +76,7 @@ function useGeneralStatusStore() {
         newSet.add(itemId)
       }
       setGeneralStatus({
-        sideNavOpenedItemList: [...newSet]
+        sideNavOpenedItemList: [...newSet],
       })
     },
     [setGeneralStatus, sideNavOpenedItemSet]
@@ -80,7 +91,7 @@ function useGeneralStatusStore() {
       }
 
       setGeneralStatus({
-        sideNavOpenedItemList: [...newSet]
+        sideNavOpenedItemList: [...newSet],
       })
     },
     [setGeneralStatus, sideNavOpenedItemSet]
@@ -112,11 +123,11 @@ function useGeneralStatusStore() {
     sideNavOpenedItemSet,
     toggleSideNavOpenedItem,
     addSideNavOpenedItem,
-    openSideNavFolderItemRecursively
+    openSideNavFolderItemRecursively,
   }
 }
 
 export const {
   StoreProvider: GeneralStatusProvider,
-  useStore: useGeneralStatus
+  useStore: useGeneralStatus,
 } = createStoreContext(useGeneralStatusStore, 'generalStatus')

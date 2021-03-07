@@ -1,38 +1,50 @@
 export default {
   translation: {
     //General
+    'general.general': 'General',
     'general.error': 'Error',
     'general.cancel': 'Cancel',
     'general.attachments': 'Attachments',
     'general.trash': 'Trash',
-    'general.allnote': 'All Notes',
+    'general.allNotes': 'All Notes',
     'general.signin': 'Sign In',
     'general.signOut': 'Sign Out',
     'general.save': 'Save',
     'general.default': 'Default',
     'general.networkError': 'Network Error',
 
+    // Navigator
+    'navigator.noStorage': 'There are no spaces',
+    'navigator.createStorage': 'Click here to create one.',
+
+    // Newsletter
+    'newsletter.subscribe': 'Subscribe',
+    'newsletter.heading': 'Subscribe Update Notes',
+    'newsletter.subscribed': 'Thanks for the subscription!',
     // Storage
-    'storage.name': 'Storage Name',
-    'storage.noStorage': 'No storages',
-    'storage.create': 'Create Storage',
-    'storage.edit': 'Edit Storage',
-    'storage.rename': 'Rename Storage',
-    'storage.renameMessage': 'Enter new storage name',
-    'storage.remove': 'Remove Storage',
-    'storage.removeMessage': 'The storage will be unlinked from this app.',
-    'storage.delete': 'Delete Storage',
+    'storage.storage': 'Space',
+    'storage.name': 'Space Name',
+    'storage.noStorage': 'No Spaces',
+    'storage.create': 'Create Space',
+    'storage.edit': 'Edit Space',
+    'storage.rename': 'Rename Space',
+    'storage.renameMessage': 'Enter new space name',
+    'storage.remove': 'Remove Space',
+    'storage.removeMessage':
+      'Warning! This will permanently remove all notes locally stored on this location.',
+    'storage.delete': 'Delete {{storage}} Space',
     'storage.move': 'Move Note',
-    'storage.moveTitle': 'Move Note to Other storage',
-    'storage.moveMessage':
-      'You are trying to move a note to different storage.',
+    'storage.moveTitle': 'Move Note to Other Space',
+    'storage.moveMessage': 'You are trying to move a note to different space.',
     'storage.copy': 'Copy Note',
+    'storage.type': 'Space Type',
     'storage.typeLocal': 'Local',
     'storage.typeCloud': 'Cloud',
-    'storage.needSignIn': 'You need to sign in to create a cloud storage.',
+    'storage.needSignIn': 'You need to sign in to create a cloud space.',
     'storage.syncDate': 'Last synced at',
 
     //Folder
+    'folder.folder': 'Folder',
     'folder.create': 'New Folder',
     'folder.rename': 'Rename Folder',
     'folder.renameMessage':
@@ -40,11 +52,18 @@ export default {
     'folder.renameErrorMessage': 'You could not rename the folder',
     'folder.remove': 'Remove Folder',
     'folder.removeMessage': 'All notes and subfolders will be deleted.',
+    'folder.select': 'Select Folder',
+    'folder.noLocationSelected': 'No location selected',
 
     //Tag
-    'tag.tag': 'Tags',
-    'tag.remove': 'Remove Tag',
-    'tag.removeMessage': 'The tag will be untagged from all notes.',
+    'tag.tags': 'Labels',
+    'tag.add': 'Add Label',
+    'tag.remove': 'Remove Label',
+    'tag.rename': 'Rename Label',
+    'tag.removeX': 'Remove #{{tag}}',
+    'tag.removeMessage': 'The label will be untagged from all notes.',
+    'tag.renameMessage':
+      'Enter the new label name. Notes with the label "{{tagName}}" will be updated to reflect the change.',
 
     //Note
     'note.duplicate': 'Duplicate',
@@ -58,12 +77,19 @@ export default {
     'note.nothingMessage': 'No notes could be found.',
     'note.noTitle': 'No title',
     'note.date': 'ago',
-    'note.createKeyMac': 'Mac: Command(⌘) + n',
-    'note.createKeyWinLin': 'Windows/Linux: Ctrl + n',
-    'note.createkeymessage1': 'to create a new note',
-    'note.createkeymessage2': 'Select a storage',
+    'note.createKeyOr': 'or',
+    'note.createKey': 'N',
+    'note.createKeyMac': 'on Mac',
+    'note.createKeyWinLin': 'on Windows/Linux',
+    'note.createkeymessage1': 'To create a new note, press',
+    'note.createkeymessage2': 'Select a space',
     'note.createkeymessage3': 'to create a new note',
     'note.restore': 'Restore',
+    'note.edit': 'Edit',
+    'note.splitView': 'Split View',
+    'note.preview': 'Preview',
+    'note.trash': 'Trash',
+    'note.export': 'Export',
 
     //Bookmark
     'bookmark.remove': 'Remove Bookmark',
@@ -103,6 +129,8 @@ export default {
       '* If you need more cloud storage, you can add it at any time by paying $5 (USD) for every 5GB. Click the "Add Extra Storage" button below.',
     'billing.addStorage': 'Add Extra Storage',
 
+    'editor.editor': 'Editor',
+
     // Preferences
     'preferences.general': 'Preferences',
 
@@ -128,6 +156,12 @@ export default {
       'You can choose to enable or disable this option.',
     'preferences.analyticsLabel': 'Enable analytics to help improve Boostnote',
     'preferences.displayTutorialsLabel': 'Tutorials and FAQ',
+    'preferences.notesView': 'Note List View',
+    'preferences.notesViewDefault': 'Default',
+    'preferences.notesViewCompact': 'Compact',
+    'preferences.autoSync': 'Enable auto sync',
+    'preferences.subfolders': 'Subfolders',
+    'preferences.subfoldersView': 'Show content of all subfolders',
 
     // Preferences EditorTab
     'preferences.editorTheme': 'Editor Theme',
@@ -145,17 +179,7 @@ export default {
     'preferences.markdownCodeBlockTheme': 'Code Block Theme',
     'preferences.defaultTheme': 'Use default style',
     'preferences.markdownPreview': 'Markdown Preview',
-
-    // Preferences ImportTab
-    'preferences.import': 'Import',
-    'preferences.description': 'Import .cson files from old Boostnote.',
-    'preferences.importFlow1': '1. Open old Boostnote folder in your PC.',
-    'preferences.importFlow2':
-      '2. Drag and drop .cson files to the form below.',
-    'preferences.importFlow3':
-      '3. Choose the Storage and Folder that you want to move your old data.',
-    'preferences.importFlow4': '4. Upload!',
-    'preferences.importRemove': 'remove',
-    'preferences.importUpload': 'Upload'
-  }
+    'preferences.markdownExport': 'Export',
+    'preferences.markdownExportOption': 'Include Front Matter',
+  },
 }

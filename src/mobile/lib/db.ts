@@ -7,14 +7,9 @@ import { createDbStoreCreator } from '../../lib/db/createStore'
 
 export const {
   StoreProvider: DbProvider,
-  useStore: useDb
+  useStore: useDb,
 } = createStoreContext(
   wrapDbStoreWithAnalytics(
-    createDbStoreCreator(
-      localLiteStorage,
-      useRouter,
-      usePathnameWithoutNoteId,
-      'idb'
-    )
+    createDbStoreCreator(localLiteStorage, useRouter, usePathnameWithoutNoteId)
   )
 )

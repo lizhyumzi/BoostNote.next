@@ -5,7 +5,7 @@ export default {
     'general.cancel': '취소',
     'general.attachments': '첨부파일',
     'general.trash': '휴지통',
-    'general.allnote': '전체 노트',
+    'general.allNotes': '전체 노트',
     'general.signin': '로그인',
     'general.signOut': '로그아웃',
     'general.save': '저장',
@@ -21,7 +21,7 @@ export default {
     'storage.renameMessage': '새로운 저장소명을 입력해주세요.',
     'storage.remove': '저장소 제거',
     'storage.removeMessage': '해당 저장소가 이 앱에서 연결이 해제됩니다.',
-    'storage.delete': '저장소 삭제',
+    'storage.delete': '저장소 삭제 {{storage}}',
     'storage.move': '노트 이동',
     'storage.moveTitle': '다른 저장소로 노트 이동',
     'storage.moveMessage': '노트를 다른 저장소로 옮기려고 합니다.',
@@ -41,9 +41,9 @@ export default {
     'folder.removeMessage': '모든 폴더와 하위폴더가 삭제됩니다.',
 
     //Tag
-    'tag.tag': '태그',
-    'tag.remove': '태그 제거',
-    'tag.removeMessage': '해당 태그가 모든 노트에서 제거됩니다.',
+    'tag.tags': '라벨',
+    'tag.remove': '라벨 제거',
+    'tag.removeMessage': '해당 라벨이 모든 노트에서 제거됩니다.',
 
     //Note
     'note.duplicate': '중복 생성',
@@ -57,8 +57,10 @@ export default {
     'note.nothingMessage': '노트를 찾을 수 없습니다.',
     'note.noTitle': '제목없음',
     'note.date': '전',
-    'note.createKeyMac': 'Mac: Command(⌘) + n',
-    'note.createKeyWinLin': 'Windows/Linux: Ctrl + n',
+    'note.createKeyOr': '또는',
+    'note.createKey': 'N',
+    'note.createKeyMac': 'Mac',
+    'note.createKeyWinLin': 'Windows/Linux',
     'note.createkeymessage1': '새 노트 생성',
     'note.createkeymessage2': '저장소 선택',
     'note.createkeymessage3': '새 노트 생성',
@@ -145,15 +147,5 @@ export default {
     'preferences.markdownCodeBlockTheme': '코드 블록 테마',
     'preferences.defaultTheme': '기본 스타일 사용',
     'preferences.markdownPreview': '마크다운 미리보기',
-
-    // Preferences ImportTab
-    'preferences.import': '불러오기',
-    'preferences.description': '이전 Boostnote에서 .cson 파일들을 불러온다.',
-    'preferences.importFlow1': '1. PC에서 이전 Boostnote 폴더를 연다.',
-    'preferences.importFlow2': '2. .cson 파일을 아래부분에 끌어다 놓는다.',
-    'preferences.importFlow3': '3. 옮기고 싶은 이전 저장소와 폴더를 선택한다.',
-    'preferences.importFlow4': '4. 업로드!',
-    'preferences.importRemove': '삭제',
-    'preferences.importUpload': '업로드'
-  }
+  },
 }

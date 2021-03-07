@@ -1,7 +1,5 @@
 export interface BaseTheme {
   colors: any
-  fontSize: number
-  fontFamily: string
 
   // General
   textColor: string
@@ -9,9 +7,10 @@ export interface BaseTheme {
   disabledUiTextColor: string
 
   primaryColor: string
+  primaryDarkerColor: string
+  dangerColor: string
   borderColor: string
-  iconColor: string
-  activeIconColor: string
+
   noteListIconColor: string
   noteListActiveIconColor: string
   noteDetailIconColor: string
@@ -26,17 +25,50 @@ export interface BaseTheme {
   scrollBarThumbColor: string
 
   // SideBar
-  sideBarBackgroundColor: string
-  sideBarTextColor: string
-  activeSideBarSecondaryTextColor: string
-  sideBarSecondaryTextColor: string
+  navBackgroundColor: string
+  navLabelColor: string
+  navButtonColor: string
+  navButtonHoverColor: string
+  navButtonActiveColor: string
+  navItemColor: string
+  navItemBackgroundColor: string
+  navItemHoverBackgroundColor: string
+  navItemActiveColor: string
+  navItemActiveBackgroundColor: string
+  navItemHoverActiveBackgroundColor: string
+
+  // NotePage
+  noteNavEmptyItemColor: string
+  noteNavItemBackgroundColor: string
+
+  // Team Switcher
+  teamSwitcherBackgroundColor: string
+  teamSwitcherBorderColor: string
+  teamSwitcherTextColor: string
+  teamSwitcherHoverBackgroundColor: string
+  teamSwitcherHoverTextColor: string
 
   // Button
   primaryButtonLabelColor: string
   primaryButtonBackgroundColor: string
+  primaryButtonHoverBackgroundColor: string
   secondaryButtonLabelColor: string
+  secondaryButtonHoverLabelColor: string
   secondaryButtonBackgroundColor: string
+  secondaryButtonHoverBackgroundColor: string
 
   // Input
   inputBackground: string
+
+  // Search Highlight
+  searchHighlightBackgroundColor: string
+  searchHighlightSubtleBackgroundColor: string
+  searchItemSelectionTextColor: string
+  searchItemSelectionBackgroundColor: string
+  searchItemSelectionHoverBackgroundColor: string
+  searchHighlightTextColor: string
+
+  // Tooltip
+  tooltipBackgroundColor: string
+  tooltipTextColor: string
 }

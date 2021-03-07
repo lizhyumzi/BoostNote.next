@@ -37,18 +37,18 @@ interface ErrorBoundaryState {
 
 class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
   state = {
-    errorStack: null
+    errorStack: null,
   }
 
   static getDerivedStateFromError(error: Error) {
     return {
-      errorStack: error.stack
+      errorStack: error.stack,
     }
   }
 
   handleError = (event: ErrorEvent) => {
     this.setState({
-      errorStack: event.error.stack!
+      errorStack: event.error.stack!,
     })
   }
 
@@ -62,7 +62,7 @@ class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
 
   reset = () => {
     this.setState({
-      errorStack: null
+      errorStack: null,
     })
   }
 
@@ -72,7 +72,7 @@ class ErrorBoundary extends React.Component<{}, ErrorBoundaryState> {
         <ThemeProvider theme={darkTheme}>
           <AppContainer>
             <GlobalStyle />
-            <TopBarLayout title='Error'>
+            <TopBarLayout titleLabel='Error'>
               <div style={{ padding: '15px' }}>
                 <h1>Error!</h1>
                 <p>Please click button</p>

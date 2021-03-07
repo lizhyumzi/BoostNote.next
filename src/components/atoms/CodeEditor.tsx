@@ -1,26 +1,48 @@
 import React from 'react'
 import CodeMirror, { getCodeMirrorTheme } from '../../lib/CodeMirror'
 import styled from '../../lib/styled'
+import { borderRight } from '../../lib/styled/styleFunctions'
 import {
   EditorIndentTypeOptions,
   EditorIndentSizeOptions,
-  EditorKeyMapOptions
+  EditorKeyMapOptions,
 } from '../../lib/preferences'
+import { osName } from '../../lib/platform'
 
 const StyledContainer = styled.div`
   .CodeMirror {
     font-family: inherit;
   }
+
+  .CodeMirror-dialog button {
+    background-color: transparent;
+    cursor: pointer;
+    height: 26px;
+    line-height: 26px;
+    padding: 0 15px;
+    transition: color 200ms ease-in-out;
+    color: ${({ theme }) => theme.primaryDarkerColor};
+    border: none;
+    ${borderRight}
+    &:last-child {
+      border-right: none;
+    }
+  }
+
+  .CodeMirror-dialog button:hover {
+    color: ${({ theme }) => theme.primaryButtonLabelColor};
+    background-color: ${({ theme }) => theme.primaryColor};
+  }
 `
 
 const defaultCodeMirrorOptions: CodeMirror.EditorConfiguration = {
   lineWrapping: true,
-  lineNumbers: true
+  lineNumbers: true,
 }
 
 interface CodeEditorProps {
   value: string
-  onChange: (
+  onChange?: (
     newValue: string,
     change: CodeMirror.EditorChangeLinkedList
   ) => void
@@ -34,6 +56,9 @@ interface CodeEditorProps {
   keyMap?: EditorKeyMapOptions
   mode?: string
   readonly?: boolean
+  onPaste?: (codeMirror: CodeMirror.Editor, event: ClipboardEvent) => void
+  onDrop?: (codeMirror: CodeMirror.Editor, event: DragEvent) => void
+  onCursorActivity?: (codeMirror: CodeMirror.Editor) => void
 }
 
 class CodeEditor extends React.Component<CodeEditorProps> {
@@ -53,14 +78,24 @@ class CodeEditor extends React.Component<CodeEditorProps> {
       indentUnit: indentSize,
       tabSize: indentSize,
       keyMap,
-      mode: this.props.mode || 'markdown',
-      readOnly: this.props.readonly === true
+      mode: this.props.mode || 'gfm',
+      readOnly: this.props.readonly === true,
+      extraKeys: {
+        Enter: 'newlineAndIndentContinueMarkdownList',
+        Tab: 'indentMore',
+        [osName === 'macos' ? 'Cmd-Alt-F' : 'Ctrl-Alt-F']: 'findPersistent',
+        Esc: 'clearSearch',
+      },
+      scrollPastEnd: true,
     })
     this.codeMirror.on('change', this.handleCodeMirrorChange)
     window.addEventListener('codemirror-mode-load', this.reloadMode)
     if (this.props.codeMirrorRef != null) {
       this.props.codeMirrorRef(this.codeMirror)
     }
+    this.codeMirror.on('paste', this.handlePaste as any)
+    this.codeMirror.on('drop', this.handleDrop)
+    this.codeMirror.on('cursorActivity', this.handleCursorActivity)
   }
 
   reloadMode = () => {
@@ -109,16 +144,43 @@ class CodeEditor extends React.Component<CodeEditorProps> {
   componentWillUnmount() {
     if (this.codeMirror != null) {
       this.codeMirror.toTextArea()
+      this.codeMirror.off('paste', this.handlePaste as any)
+      this.codeMirror.off('drop', this.handleDrop)
+      this.codeMirror.off('cursorActivity', this.handleCursorActivity)
     }
     window.removeEventListener('codemirror-mode-load', this.reloadMode)
+  }
+
+  handlePaste = (editor: CodeMirror.Editor, event: ClipboardEvent) => {
+    const { onPaste } = this.props
+    if (onPaste == null) {
+      return
+    }
+
+    onPaste(editor, event)
+  }
+
+  handleDrop = (editor: CodeMirror.Editor, event: DragEvent) => {
+    const { onDrop } = this.props
+    if (onDrop == null) {
+      return
+    }
+
+    onDrop(editor, event)
   }
 
   handleCodeMirrorChange = (
     editor: CodeMirror.Editor,
     change: CodeMirror.EditorChangeLinkedList
   ) => {
-    if (change.origin !== 'setValue') {
+    if (change.origin !== 'setValue' && this.props.onChange != null) {
       this.props.onChange(editor.getValue(), change)
+    }
+  }
+
+  handleCursorActivity = (editor: CodeMirror.Editor) => {
+    if (this.props.onCursorActivity != null) {
+      this.props.onCursorActivity(editor)
     }
   }
 
@@ -130,7 +192,7 @@ class CodeEditor extends React.Component<CodeEditorProps> {
         className={className}
         style={{
           fontSize: fontSize == null ? 'inherit' : `${fontSize}px`,
-          fontFamily: fontFamily == null ? 'monospace' : fontFamily
+          fontFamily: fontFamily == null ? 'monospace' : fontFamily,
         }}
       >
         <textarea ref={this.textAreaRef} defaultValue={value} />

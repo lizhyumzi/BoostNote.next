@@ -1,15 +1,10 @@
 import { useEffect } from 'react'
 import { osName } from './platform'
-import isElectron from 'is-electron'
 
 export const useGlobalKeyDownHandler = (
   handler: (event: KeyboardEvent) => void
 ) => {
   return useEffect(() => {
-    if (!isElectron()) {
-      return
-    }
-
     window.addEventListener('keydown', handler)
     return () => {
       window.removeEventListener('keydown', handler)
@@ -25,5 +20,16 @@ export function isWithGeneralCtrlKey(
       return event.metaKey
     default:
       return event.ctrlKey
+  }
+}
+
+export function isWithGeneralCtrlShiftKeys(
+  event: KeyboardEvent | React.KeyboardEvent
+) {
+  switch (osName) {
+    case 'macos':
+      return event.metaKey && event.shiftKey
+    default:
+      return event.ctrlKey && event.shiftKey
   }
 }

@@ -1,5 +1,6 @@
-import NoteDb from './NoteDb'
+import PouchNoteDb from './PouchNoteDb'
 import { JsonObject, Except } from 'type-fest'
+import FSNoteDb from './FSNoteDb'
 
 export type ObjectMap<T> = {
   [key: string]: T | undefined
@@ -11,24 +12,41 @@ export type ObjectMap<T> = {
 
 export type ExceptRev<D extends PouchDB.Core.RevisionIdMeta> = Except<D, '_rev'>
 
-export interface NoteStorageData {
+export interface CloudNoteStorageData {
+  id: number
+  name?: string
+  size: number
+  syncedAt?: number
+}
+
+export interface PouchNoteStorageData {
+  type?: 'pouch'
   id: string
   name: string
-  cloudStorage?: {
-    id: number
-    size: number
-    updatedAt: number
-  }
+  cloudStorage?: CloudNoteStorageData
 }
+
+export interface FSNoteStorageData {
+  type: 'fs'
+  id: string
+  name: string
+  location: string
+}
+
+export type NoteStorageData = PouchNoteStorageData | FSNoteStorageData
 
 export type NoteDocEditibleProps = {
   title: string
   content: string
   folderPathname: string
   tags: string[]
-  bookmarked: boolean
   data: JsonObject
 }
+
+export type NoteDocImportableProps = {
+  createdAt: string
+  updatedAt: string
+} & NoteDocEditibleProps
 
 export type NoteDoc = {
   _id: string
@@ -38,13 +56,11 @@ export type NoteDoc = {
   _rev: string
 } & NoteDocEditibleProps
 
-export type PopulatedNoteDoc = NoteDoc & { storageId: string }
-
 export type FolderDoc = {
   _id: string // folder:${FOLDER_PATHNAME}
   createdAt: string
   updatedAt: string
-  _rev: string
+  _rev?: string
 } & FolderDocEditibleProps
 
 export type FolderDocEditibleProps = {
@@ -55,21 +71,27 @@ export type TagDoc = {
   _id: string // tag:${TAG_NAME}
   createdAt: string
   updatedAt: string
-  _rev: string
+  _rev?: string
 } & TagDocEditibleProps
 
 export type TagDocEditibleProps = {
+  createdAt: string
+  updatedAt: string
   data: JsonObject
 }
+
+export type AttachmentData =
+  | { type: 'blob'; blob: Blob }
+  | { type: 'src'; src: string }
 
 export type Attachment = {
   name: string
   type: string
-  blob: Blob
+  getData: () => Promise<AttachmentData>
 }
 
 export interface AllDocsMap {
-  noteMap: ObjectMap<PopulatedNoteDoc>
+  noteMap: ObjectMap<NoteDoc>
   folderMap: ObjectMap<FolderDoc>
   tagMap: ObjectMap<TagDoc>
 }
@@ -79,11 +101,18 @@ export interface AllDocsMap {
  */
 
 export type NoteIdSet = Set<string>
-export type NoteStorage = NoteStorageData &
-  AllPopulatedDocsMap & {
-    db: NoteDb
-  }
 
+export type PouchNoteStorage = PouchNoteStorageData &
+  AllPopulatedDocsMap & {
+    db: PouchNoteDb
+    sync?: PouchDB.Replication.Sync<any>
+    syncTimer?: any
+  }
+export type FSNoteStorage = FSNoteStorageData &
+  AllPopulatedDocsMap & {
+    db: FSNoteDb
+  }
+export type NoteStorage = PouchNoteStorage | FSNoteStorage
 export type PopulatedFolderDoc = FolderDoc & {
   pathname: string
   noteIdSet: NoteIdSet
@@ -95,8 +124,9 @@ export type PopulatedTagDoc = TagDoc & {
 }
 
 export interface AllPopulatedDocsMap {
-  noteMap: ObjectMap<PopulatedNoteDoc>
+  noteMap: ObjectMap<NoteDoc>
   folderMap: ObjectMap<PopulatedFolderDoc>
   tagMap: ObjectMap<PopulatedTagDoc>
   attachmentMap: ObjectMap<Attachment>
+  bookmarkedItemIds: string[]
 }

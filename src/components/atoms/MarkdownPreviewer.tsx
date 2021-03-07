@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useCallback, useRef, useMemo } from 'react'
 import unified, { Plugin } from 'unified'
+import remarkEmoji from 'remark-emoji'
 import remarkParse from 'remark-parse'
 import remarkRehype from 'remark-rehype'
+import remarkSlug from 'remark-slug'
 import remarkMath from 'remark-math'
+import remarkAbmonitions from 'remark-admonitions'
 import rehypeRaw from 'rehype-raw'
 import rehypeSanitize from 'rehype-sanitize'
 import rehypeReact from 'rehype-react'
@@ -13,29 +16,25 @@ import visit from 'unist-util-visit'
 import { Node, Parent } from 'unist'
 import CodeMirror from '../../lib/CodeMirror'
 import h from 'hastscript'
-import useForceUpdate from 'use-force-update'
 import styled from '../../lib/styled'
 import cc from 'classcat'
 import { openNew } from '../../lib/platform'
 import { Attachment, ObjectMap } from '../../lib/db/types'
-import 'katex/dist/katex.min.css'
+import MarkdownCheckbox from './markdown/MarkdownCheckbox'
+import AttachmentImage from './markdown/AttachmentImage'
+import CodeFence from './markdown/CodeFence'
 
 const schema = mergeDeepRight(gh, {
   attributes: {
-    '*': ['className'],
-    input: ['checked']
-  }
+    '*': [...gh.attributes['*'], 'className', 'align'],
+    input: [...gh.attributes.input, 'checked'],
+    pre: ['dataRaw'],
+  },
 })
 
 interface Element extends Parent {
   type: 'element'
   properties: { [key: string]: any }
-}
-
-function getMime(name: string) {
-  const modeInfo = CodeMirror.findModeByName(name)
-  if (modeInfo == null) return null
-  return modeInfo.mime || modeInfo.mimes![0]
 }
 
 interface RehypeCodeMirrorOptions {
@@ -44,7 +43,7 @@ interface RehypeCodeMirrorOptions {
   theme: string
 }
 
-function isElement(node: Node, tagName: string): node is Element {
+function isElement(node: Node | undefined, tagName: string): node is Element {
   if (node == null) {
     return false
   }
@@ -56,12 +55,12 @@ function rehypeCodeMirrorAttacher(options: Partial<RehypeCodeMirrorOptions>) {
   const ignoreMissing = settings.ignoreMissing || false
   const theme = settings.theme || 'default'
   const plainText = settings.plainText || []
-  return function(tree: Node) {
+  return function (tree: Node) {
     visit<Element>(tree, 'element', visitor)
 
     return tree
 
-    function visitor(node: Element, _index: number, parent: Node) {
+    function visitor(node: Element, _index: number, parent?: Node) {
       if (!isElement(parent, 'pre') || !isElement(node, 'code')) {
         return
       }
@@ -82,31 +81,41 @@ function rehypeCodeMirrorAttacher(options: Partial<RehypeCodeMirrorOptions>) {
       }
       parent.properties.className = classNames
 
+      const rawContent = node.children[0].value as string
+      // TODO: Stop using html attribute after exposing HAST Node is shipped
+      parent.properties['data-raw'] = rawContent
+
       if (lang == null || lang === false || plainText.indexOf(lang) !== -1) {
         return
       }
 
-      const rawContent = node.children[0].value as string
       const cmResult = [] as Node[]
       if (lang != null) {
-        const mime = getMime(lang)
-        if (mime != null) {
-          CodeMirror.runMode(rawContent, mime, (text, style) => {
-            cmResult.push(
-              h(
-                'span',
-                {
-                  className: style
-                    ? 'cm-' + style.replace(/ +/g, ' cm-')
-                    : undefined
-                },
-                text
-              )
-            )
-          })
-        } else if (!ignoreMissing) {
+        const modeInfo = CodeMirror.findModeByName(lang)
+        if (modeInfo == null) {
+          if (ignoreMissing) {
+            return
+          }
+
           throw new Error(`Unknown language: \`${lang}\` is not registered`)
         }
+        const mime = modeInfo.mime || modeInfo.mimes?.[0]
+        parent.properties['data-ext'] = modeInfo.ext?.[0]
+        parent.properties['data-mime'] = mime
+
+        CodeMirror.runMode(rawContent, mime, (text, style) => {
+          cmResult.push(
+            h(
+              'span',
+              {
+                className: style
+                  ? 'cm-' + style.replace(/ +/g, ' cm-')
+                  : undefined,
+              },
+              text
+            )
+          )
+        })
       }
 
       node.children = cmResult
@@ -144,24 +153,15 @@ export const rehypeCodeMirror = rehypeCodeMirrorAttacher as Plugin<
   [Partial<RehypeCodeMirrorOptions>?]
 >
 
-const BlobImage = ({ blob, ...props }: any) => {
-  const url = useMemo(() => {
-    return URL.createObjectURL(blob)
-  }, [blob])
-  useEffect(() => {
-    return () => {
-      URL.revokeObjectURL(url)
-    }
-  }, [blob, url])
-  return <img src={url} {...props} />
-}
-
 interface MarkdownPreviewerProps {
   content: string
   codeBlockTheme?: string
   style?: string
   theme?: string
   attachmentMap?: ObjectMap<Attachment>
+  updateContent?: (
+    newContentOrUpdater: string | ((newValue: string) => string)
+  ) => void
 }
 
 const MarkdownPreviewer = ({
@@ -169,27 +169,36 @@ const MarkdownPreviewer = ({
   codeBlockTheme,
   style,
   theme,
-  attachmentMap = {}
+  attachmentMap = {},
+  updateContent,
 }: MarkdownPreviewerProps) => {
-  const forceUpdate = useForceUpdate()
   const [rendering, setRendering] = useState(false)
   const previousContentRef = useRef('')
   const previousThemeRef = useRef<string | undefined>('')
   const [renderedContent, setRenderedContent] = useState<React.ReactNode>([])
 
-  const markdownProcessor = useMemo(() => {
-    const options = { codeBlockTheme }
+  const checkboxIndexRef = useRef<number>(0)
 
+  const remarkAdmonitionOptions = {
+    tag: ':::',
+    icons: 'emoji',
+    infima: false,
+  }
+
+  const markdownProcessor = useMemo(() => {
     return unified()
       .use(remarkParse)
-      .use(remarkRehype, { allowDangerousHTML: false })
+      .use(remarkSlug)
+      .use(remarkEmoji, { emoticon: false })
+      .use(remarkAbmonitions, remarkAdmonitionOptions)
       .use(remarkMath)
-      .use(rehypeCodeMirror, {
-        ignoreMissing: true,
-        theme: options.codeBlockTheme
-      })
+      .use(remarkRehype, { allowDangerousHtml: true })
       .use(rehypeRaw)
       .use(rehypeSanitize, schema)
+      .use(rehypeCodeMirror, {
+        ignoreMissing: true,
+        theme: codeBlockTheme,
+      })
       .use(rehypeKatex)
       .use(rehypeReact, {
         createElement: React.createElement,
@@ -198,7 +207,7 @@ const MarkdownPreviewer = ({
             if (src != null && !src.match('/')) {
               const attachment = attachmentMap[src]
               if (attachment != null) {
-                return <BlobImage blob={attachment.blob} />
+                return <AttachmentImage attachment={attachment} {...props} />
               }
             }
 
@@ -208,7 +217,7 @@ const MarkdownPreviewer = ({
             return (
               <a
                 href={href}
-                onClick={event => {
+                onClick={(event) => {
                   event.preventDefault()
                   openNew(href)
                 }}
@@ -216,33 +225,46 @@ const MarkdownPreviewer = ({
                 {children}
               </a>
             )
-          }
-        }
+          },
+          input: (props: React.HTMLProps<HTMLInputElement>) => {
+            const { type, checked } = props
+
+            if (type !== 'checkbox') {
+              return <input {...props} />
+            }
+
+            return (
+              <MarkdownCheckbox
+                index={checkboxIndexRef.current++}
+                checked={checked}
+                updateContent={updateContent}
+              />
+            )
+          },
+          pre: CodeFence,
+        },
       })
-  }, [codeBlockTheme, attachmentMap])
+  }, [remarkAdmonitionOptions, codeBlockTheme, attachmentMap, updateContent])
 
-  const renderContent = useCallback(
-    async (content: string) => {
-      previousContentRef.current = content
-      previousThemeRef.current = codeBlockTheme
-      setRendering(true)
+  const renderContent = useCallback(async () => {
+    const content = previousContentRef.current
+    setRendering(true)
 
-      console.time('render')
-      const result = await markdownProcessor.process(content)
-      console.timeEnd('render')
+    console.time('render')
+    checkboxIndexRef.current = 0
+    const result = await markdownProcessor.process(content)
+    console.timeEnd('render')
 
-      setRendering(false)
-      setRenderedContent(result.contents)
-    },
-    [codeBlockTheme, markdownProcessor]
-  )
+    setRendering(false)
+    setRenderedContent((result as any).result)
+  }, [markdownProcessor])
 
   useEffect(() => {
-    window.addEventListener('codemirror-mode-load', forceUpdate)
+    window.addEventListener('codemirror-mode-load', renderContent)
     return () => {
-      window.removeEventListener('codemirror-mode-load', forceUpdate)
+      window.removeEventListener('codemirror-mode-load', renderContent)
     }
-  }, [forceUpdate])
+  }, [renderContent])
 
   useEffect(() => {
     console.log('render requested')
@@ -254,7 +276,9 @@ const MarkdownPreviewer = ({
       return
     }
     console.log('rendering...')
-    renderContent(content)
+    previousContentRef.current = content
+    previousThemeRef.current = codeBlockTheme
+    renderContent()
   }, [content, codeBlockTheme, rendering, renderContent, renderedContent])
 
   const StyledContainer = useMemo(() => {
@@ -267,7 +291,7 @@ const MarkdownPreviewer = ({
   }, [style])
 
   return (
-    <StyledContainer className='MarkdownPreviewer'>
+    <StyledContainer className='MarkdownPreviewer' tabIndex='0'>
       <div className={cc([theme])}>
         {rendering && 'rendering...'}
         {renderedContent}

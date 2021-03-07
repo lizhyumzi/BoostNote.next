@@ -1,5 +1,6 @@
 import React from 'react'
-import { StorageAttachmentsRouteParams, useRouteParams } from '../../lib/router'
+import { StorageAttachmentsRouteParams } from '../../../lib/routeParams'
+import { useRouteParams } from '../../lib/router'
 import { useDb } from '../../lib/db'
 import AttachmentList from '../../../components/organisms/AttachmentList'
 import TopBarLayout from '../layouts/TopBarLayout'
@@ -18,7 +19,7 @@ const AttachmentsPage = () => {
   return (
     <TopBarLayout
       leftControl={<TopBarToggleNavButton />}
-      title={<>Attachments in {storage.name}</>}
+      titleLabel={`Attachments in ${storage.name}`}
     >
       <AttachmentList storage={storage} />
     </TopBarLayout>

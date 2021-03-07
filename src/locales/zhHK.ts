@@ -5,7 +5,7 @@ export default {
     'general.cancel': '取消',
     'general.attachments': '附件',
     'general.trash': '垃圾筒',
-    'general.allnote': '所有筆記',
+    'general.allNotes': '所有筆記',
     'general.signin': '登入',
     'general.signOut': '登出',
     'general.save': '儲存',
@@ -21,7 +21,7 @@ export default {
     'storage.renameMessage': '輸入新的儲存空間名稱',
     'storage.remove': '移除儲存空間',
     'storage.removeMessage': '這個筆記將會從這個 APP 解除聯繫.',
-    'storage.delete': '刪除儲存空間',
+    'storage.delete': '刪除儲存空間 {{storage}}',
     'storage.move': '移動儲存空間',
     'storage.moveTitle': '移動筆記到其他儲存空間',
     'storage.moveMessage': '你正在嘗試把筆記移到另一個儲存空間.',
@@ -41,7 +41,7 @@ export default {
     'folder.removeMessage': '所有筆記和子資料夾將被刪除.',
 
     //Tag
-    'tag.tag': '標籤',
+    'tag.tags': '標籤',
     'tag.remove': '移除標籤',
     'tag.removeMessage': '這個標籤將從所有筆記中被移除.',
 
@@ -57,9 +57,11 @@ export default {
     'note.nothingMessage': '搵唔到你要嘅筆記.',
     'note.noTitle': '無標題',
     'note.date': '之前',
-    'note.createKeyMac': 'Mac: Command(⌘) + Enter',
-    'note.createKeyWinLin': 'Windows/Linux: Ctrl + Enter',
-    'note.createkeymessage1': '新筆記',
+    'note.createKeyOr': '或',
+    'note.createKey': 'Enter',
+    'note.createKeyMac': '在Mac系统上',
+    'note.createKeyWinLin': '在Windows系统上',
+    'note.createkeymessage1': '新筆記, 按',
     'note.createkeymessage2': '選擇儲存空間',
     'note.createkeymessage3': '新筆記',
     'note.restore': 'Restore',
@@ -143,15 +145,5 @@ export default {
     'preferences.markdownCodeBlockTheme': '代碼塊主題',
     'preferences.defaultTheme': '使用預設主題',
     'preferences.markdownPreview': 'Markdown 預覽',
-
-    // Preferences ImportTab
-    'preferences.import': '導入',
-    'preferences.description': '從舊版 Boostnote 導入 .cson 文件.',
-    'preferences.importFlow1': '1. 在你的電腦打開舊版 Boostnote 資料夾.',
-    'preferences.importFlow2': '2. 拖拽 .cson 檔到以下表單.',
-    'preferences.importFlow3': '3. 選擇你想要移動舊資料的存儲和資料夾.',
-    'preferences.importFlow4': '4. 上傳!',
-    'preferences.importRemove': '移除',
-    'preferences.importUpload': '上傳'
-  }
+  },
 }

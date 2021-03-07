@@ -5,7 +5,7 @@ export default {
     'general.cancel': 'Скасувати',
     'general.attachments': 'Вкладення',
     'general.trash': 'Сміття',
-    'general.allnote': 'Усі примітки',
+    'general.allNotes': 'Усі примітки',
     'general.signin': 'Увійти',
     'general.signOut': 'Вийти',
     'general.save': 'Зберегти',
@@ -21,7 +21,7 @@ export default {
     'storage.renameMessage': 'Введіть нову назву сховища',
     'storage.remove': 'Видаліть сховище',
     'storage.removeMessage': 'З цього додатка буде від’єднано сховище.',
-    'storage.delete': 'Видалити сховище',
+    'storage.delete': 'Видалити сховище {{storage}}',
     'storage.move': 'Перемістіти нотатку',
     'storage.moveTitle': 'Перемістити нотатку до іншого сховища',
     'storage.moveMessage':
@@ -42,7 +42,7 @@ export default {
     'folder.removeMessage': 'Усі нотатки та папки будуть видалені.',
 
     // Tag
-    'tag.tag': 'Теги',
+    'tag.tags': 'Теги',
     'tag.remove': 'Видалити тег',
     'tag.removeMessage': 'Тег буде відмічений від усіх нотаток.',
 
@@ -58,9 +58,11 @@ export default {
     'note.nothingMessage': 'Не вдалося знайти нотатки.',
     'note.noTitle': 'Без назви',
     'note.date': 'тому',
-    'note.createKeyMac': 'Mac: Command(⌘) + n',
-    'note.createKeyWinLin': 'Windows/Linux: Ctrl + n',
-    'note.createkeymessage1': 'Щоб створити нову нотатку',
+    'note.createKeyOr': 'или',
+    'note.createKey': 'N',
+    'note.createKeyMac': 'на Mac',
+    'note.createKeyWinLin': 'на Windows/Linux',
+    'note.createkeymessage1': 'Щоб створити нову нотатку, натисніть',
     'note.createkeymessage2': 'Виберіть сховище',
     'note.createkeymessage3': 'Щоб створити нову нотатку',
 
@@ -145,17 +147,5 @@ export default {
     'preferences.markdownCodeBlockTheme': 'Тема блоку коду',
     'preferences.defaultTheme': 'Використовувати стиль за замовчуванням',
     'preferences.markdownPreview': 'Попередній перегляд Markdown',
-
-    // Preferences ImportTab
-    'preferences.import': 'Імпорт',
-    'preferences.description': 'Імпортуйте файли .cson зі старого Boostnote.',
-    'preferences.importFlow1':
-      '1. Відкрийте стару папку Boostnote на своєму ПК.',
-    'preferences.importFlow2': '2. Перетягніть файли .cson у форму нижче.',
-    'preferences.importFlow3':
-      '3. Виберіть Сховище та папку, до яких потрібно перемістити старі дані.',
-    'preferences.importFlow4': '4. Upload!',
-    'preferences.importRemove': 'Видалити',
-    'preferences.importUpload': 'Завантажити'
-  }
+  },
 }

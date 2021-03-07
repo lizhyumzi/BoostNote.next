@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import styled from '../../lib/styled'
 import { usePreferences } from '../../lib/preferences'
 import TabButton from './TabButton'
@@ -7,69 +7,133 @@ import GeneralTab from './GeneralTab'
 import EditorTab from './EditorTab'
 import MarkdownTab from './MarkdownTab'
 import AboutTab from './AboutTab'
-import BillingTab from './BillingTab'
-import ImportTab from './ImportTab'
 import {
   backgroundColor,
-  closeIconColor
+  closeIconColor,
+  border,
+  flexCenter,
+  borderBottom,
+  borderLeft,
 } from '../../lib/styled/styleFunctions'
-import { IconClose } from '../icons'
 import { useTranslation } from 'react-i18next'
+import Icon from '../atoms/Icon'
+import { mdiClose, mdiHammerWrench } from '@mdi/js'
+import { useDb } from '../../lib/db'
+import { useRouteParams } from '../../lib/routeParams'
+import StorageTab from './StorageTab'
+import MigrationPage from './MigrationTab'
 
-const Container = styled.div`
+const FullScreenContainer = styled.div`
   z-index: 7000;
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  ${backgroundColor}
-  display: flex;
-  overflow: hidden;
 `
 
-const Header = styled.h1`
+const BackgroundShadow = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  ${border}
+`
+
+const ContentContainer = styled.div`
+  z-index: 7001;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  ${backgroundColor}
+  ${border}
+`
+
+const ModalHeader = styled.div`
+  height: 40px;
+  ${borderBottom}
+  display: flex;
+`
+
+const ModalTitle = styled.h1`
   margin: 0;
-  padding: 1em 0;
+  line-height: 40px;
+  font-size: 1em;
+  font-weight: bold;
+  padding: 0 10px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+`
+
+const ModalBody = styled.div`
+  display: flex;
+  overflow: hidden;
+  height: 100%;
 `
 
 const TabNav = styled.nav`
   width: 200px;
-  margin-left: 30px;
 `
 
 const TabContent = styled.div`
   flex: 1;
   overflow-y: auto;
-  padding-left: 4px;
-  padding-top: 4em;
-  padding-right: 30px;
+  padding: 1em;
+  ${borderLeft}
 `
 
 const CloseButton = styled.button`
-  position: absolute;
-  top: 0;
-  right: 12px;
   width: 40px;
   height: 40px;
   background-color: transparent;
   border: none;
   font-size: 24px;
+  ${flexCenter}
   ${closeIconColor}
 `
 
 const PreferencesModal = () => {
   const { t } = useTranslation()
-  const { closed, toggleClosed } = usePreferences()
-  const [tab, setTab] = useState('general')
+  const {
+    closed,
+    togglePreferencesModal,
+    tab,
+    openTab,
+    preferences,
+  } = usePreferences()
+  const { storageMap } = useDb()
+  const routeParams = useRouteParams()
 
-  const keydownHandler = useMemo(() => {
-    return (event: KeyboardEvent) => {
-      if (!closed && event.key === 'Escape') {
-        toggleClosed()
-      }
+  const currentStorage = useMemo(() => {
+    let storageId: string
+    switch (routeParams.name) {
+      case 'storages.notes':
+      case 'storages.tags.show':
+      case 'storages.attachments':
+      case 'storages.trashCan':
+        storageId = routeParams.storageId
+        break
+      default:
+        return null
     }
-  }, [closed, toggleClosed])
+    const storage = storageMap[storageId]
+    return storage != null ? storage : null
+  }, [storageMap, routeParams])
+
+  const keydownHandler = useCallback(
+    (event: KeyboardEvent) => {
+      if (!closed && event.key === 'Escape') {
+        togglePreferencesModal()
+      }
+    },
+    [closed, togglePreferencesModal]
+  )
   useGlobalKeyDownHandler(keydownHandler)
 
   const content = useMemo(() => {
@@ -80,72 +144,84 @@ const PreferencesModal = () => {
         return <MarkdownTab />
       case 'about':
         return <AboutTab />
-      case 'billing':
-        return <BillingTab />
-      case 'import':
-        return <ImportTab />
+      case 'storage':
+        if (currentStorage != null) {
+          return <StorageTab storage={currentStorage} />
+        }
+      case 'migration':
+        if (currentStorage != null) {
+          return <MigrationPage storage={currentStorage} />
+        }
       case 'general':
       default:
         return <GeneralTab />
     }
-  }, [tab])
+  }, [tab, currentStorage])
 
   if (closed) {
     return null
   }
 
   return (
-    <Container>
-      <TabNav>
-        <Header>{t('preferences.general')}</Header>
-        <TabButton
-          label='General'
-          tab='general'
-          active={tab === 'general'}
-          setTab={setTab}
-        />
-        <TabButton
-          label='Editor'
-          tab='editor'
-          active={tab === 'editor'}
-          setTab={setTab}
-        />
-        <TabButton
-          label='Markdown'
-          tab='markdown'
-          active={tab === 'markdown'}
-          setTab={setTab}
-        />
-        {/* <TabButton
-          label='Hotkeys'
-          tab='hotkeys'
-          active={tab === 'hotkeys'}
-          setTab={setTab}
-        /> */}
-        <TabButton
-          label='About'
-          tab='about'
-          active={tab === 'about'}
-          setTab={setTab}
-        />
-        <TabButton
-          label='Billing'
-          tab='billing'
-          active={tab === 'billing'}
-          setTab={setTab}
-        />
-        <TabButton
-          label='Import'
-          tab='import'
-          active={tab === 'import'}
-          setTab={setTab}
-        />
-      </TabNav>
-      <TabContent>{content}</TabContent>
-      <CloseButton onClick={toggleClosed}>
-        <IconClose />
-      </CloseButton>
-    </Container>
+    <FullScreenContainer>
+      <ContentContainer
+        style={{
+          left: preferences['general.showAppNavigator'] ? 68 : 0,
+        }}
+      >
+        <ModalHeader>
+          <ModalTitle>
+            <Icon size={24} path={mdiHammerWrench} />
+            {t('preferences.general')}
+          </ModalTitle>
+          <CloseButton onClick={togglePreferencesModal}>
+            <Icon path={mdiClose} />
+          </CloseButton>
+        </ModalHeader>
+        <ModalBody>
+          <TabNav>
+            <TabButton
+              label={t('about.about')}
+              tab='about'
+              active={tab === 'about'}
+              setTab={openTab}
+            />
+            <TabButton
+              label={t('general.general')}
+              tab='general'
+              active={tab === 'general'}
+              setTab={openTab}
+            />
+            {currentStorage != null && (
+              <TabButton
+                label='Storage'
+                tab='storage'
+                active={tab === 'storage' || tab === 'migration'}
+                setTab={openTab}
+                alert={
+                  currentStorage.type === 'pouch' &&
+                  currentStorage.cloudStorage != null
+                }
+              />
+            )}
+            <TabButton
+              label={t('editor.editor')}
+              tab='editor'
+              active={tab === 'editor'}
+              setTab={openTab}
+            />
+            <TabButton
+              label='Markdown'
+              tab='markdown'
+              active={tab === 'markdown'}
+              setTab={openTab}
+            />
+          </TabNav>
+          <TabContent>{content}</TabContent>
+        </ModalBody>
+      </ContentContainer>
+      <BackgroundShadow onClick={togglePreferencesModal} />
+    </FullScreenContainer>
   )
 }
 

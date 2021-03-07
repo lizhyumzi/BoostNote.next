@@ -1,4 +1,5 @@
 import { NoteDoc } from './db/types'
+import { convertFileListToArray } from './dom'
 
 const noteFormat = 'application/x-boost-note-json'
 
@@ -32,7 +33,7 @@ export function setTransferrableNoteData(
     noteFormat,
     JSON.stringify({
       storageId,
-      note
+      note,
     })
   )
 }
@@ -40,11 +41,5 @@ export function setTransferrableNoteData(
 export function getFileList(event: React.DragEvent): File[] {
   if (event.dataTransfer == null) return []
 
-  const files: File[] = []
-  for (let i = 0; i < event.dataTransfer!.files.length; i++) {
-    const file = event.dataTransfer!.files[i]
-    files.push(file)
-  }
-
-  return files
+  return convertFileListToArray(event.dataTransfer.files)
 }

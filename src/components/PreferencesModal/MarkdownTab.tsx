@@ -5,7 +5,7 @@ import {
   SectionControl,
   SectionPrimaryButton,
   SectionSecondaryButton,
-  SectionSelect
+  SectionSelect,
 } from './styled'
 import CustomizedCodeEditor from '../atoms/CustomizedCodeEditor'
 import CustomizedMarkdownPreviewer from '../atoms/CustomizedMarkdownPreviewer'
@@ -17,6 +17,7 @@ import { capitalize } from '../../lib/string'
 import { useTranslation } from 'react-i18next'
 import { usePreviewStyle, defaultPreviewStyle } from '../../lib/preview'
 import { borderRight, border } from '../../lib/styled/styleFunctions'
+import { FormCheckItem } from '../atoms/form'
 
 const EditorContainer = styled.div`
   ${border}
@@ -36,6 +37,8 @@ const PreviewContainer = styled.div`
   ${border}
   .panel {
     width: 50%;
+    padding: 15px;
+
     &:first-child {
       ${borderRight}
     }
@@ -64,9 +67,9 @@ const MarkdownTab = () => {
   const { preferences, setPreferences } = usePreferences()
 
   const selectCodeFenceTheme: SelectChangeEventHandler = useCallback(
-    event => {
+    (event) => {
       setPreferences({
-        'markdown.codeBlockTheme': event.target.value
+        'markdown.codeBlockTheme': event.target.value,
       })
     },
     [setPreferences]
@@ -74,10 +77,19 @@ const MarkdownTab = () => {
 
   const [previewContent, setPreviewContent] = useState(defaultPreviewContent)
   const updatePreviewContent = useCallback(
-    newValue => {
+    (newValue) => {
       setPreviewContent(newValue)
     },
     [setPreviewContent]
+  )
+
+  const toggleFrontMatterExport: React.ChangeEventHandler<HTMLInputElement> = useCallback(
+    (event) => {
+      setPreferences({
+        'markdown.includeFrontMatter': event.target.checked,
+      })
+    },
+    [setPreferences]
   )
 
   const { t } = useTranslation()
@@ -110,7 +122,7 @@ const MarkdownTab = () => {
             onChange={selectCodeFenceTheme}
           >
             <option value='default'>{t('general.default')}</option>
-            {themes.map(theme => (
+            {themes.map((theme) => (
               <option value={theme} key={theme}>
                 {capitalize(theme)}
               </option>
@@ -131,6 +143,19 @@ const MarkdownTab = () => {
             <CustomizedMarkdownPreviewer content={previewContent} />
           </div>
         </PreviewContainer>
+      </Section>
+      <Section>
+        <SectionHeader>{t('preferences.markdownExport')}</SectionHeader>
+        <SectionControl>
+          <FormCheckItem
+            id='checkbox-include-front-matter'
+            type='checkbox'
+            checked={preferences['markdown.includeFrontMatter']}
+            onChange={toggleFrontMatterExport}
+          >
+            {t('preferences.markdownExportOption')}
+          </FormCheckItem>
+        </SectionControl>
       </Section>
     </div>
   )
